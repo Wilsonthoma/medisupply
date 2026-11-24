@@ -1,0 +1,122 @@
+{% extends "myapp/base.html" %}
+{% load static %}
+
+{% block title %}Facility Inventory{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'myapp/css/inventory.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+    <div>
+        <h1 class="h4 mb-1">Facility Inventory Balances</h1>
+        <p class="text-muted small mb-0">On-hand, reserved, available stock and reorder thresholds</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'batch_list' %}" class="btn btn-sm btn-outline-primary">View Batches (FEFO)</a>
+        <a href="{% url 'commodity_list' %}" class="btn btn-sm btn-outline-secondary">Commodity Catalog</a>
+        {% if user.role and user.role.role_code != 'ROLE_BRANCH_OFFICER' %}
+        <a href="{% url 'receive_shipment' %}" class="btn btn-sm ms-btn-medical">Receive Shipment</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card ms-card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-2 align-items-end">
+            {% if user.role and user.role.role_code != 'ROLE_BRANCH_OFFICER' %}
+            <div class="col-12 col-md-4">
+                <label for="msFilterFacility" class="form-label small mb-1">Facility</label>
+                <select name="facility" id="msFilterFacility" class="form-select form-select-sm">
+                    <option value="">All Active Facilities</option>
+                    {% for h in hospitals %}
+                    <option value="{{ h.pk }}" {% if selected_facility == h.pk|stringformat:"s" %}selected{% endif %}>
+                        {{ h.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% endif %}
+            <div class="col-12 col-md-4">
+                <label for="msFilterCategory" class="form-label small mb-1">Category</label>
+                <select name="category" id="msFilterCategory" class="form-select form-select-sm">
+                    <option value="">All Categories</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.pk }}" {% if selected_category == cat.pk|stringformat:"s" %}selected{% endif %}>
+                        {{ cat.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12 col-md-2">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="low_stock" value="1"
+                           id="msLowStockCheck" {% if low_stock_only %}checked{% endif %}>
+                    <label class="form-check-label small" for="msLowStockCheck">Low stock only</label>
+                </div>
+            </div>
+            <div class="col-12 col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-sm btn-primary w-100">Filter</button>
+                <a href="{% url 'inventory_list' %}" class="btn btn-sm btn-outline-secondary">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card ms-card">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Facility</th>
+                    <th>Commodity</th>
+                    <th>Category</th>
+                    <th class="text-end">On Hand</th>
+                    <th class="text-end">Reserved</th>
+                    <th class="text-end">Available</th>
+                    <th class="text-end">Reorder Level</th>
+                    {% if user.role and user.role.role_code != 'ROLE_BRANCH_OFFICER' %}
+                    <th>Update Reorder</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in inventory_items %}
+                <tr class="{% if item.quantity_on_hand <= item.reorder_level %}ms-stock-low{% endif %}">
+                    <td>{{ item.hospital.name }}</td>
+                    <td>
+                        <div class="fw-semibold">{{ item.commodity.name }}</div>
+                        <div class="small text-muted">{{ item.commodity.commodity_code }} ({{ item.commodity.unit_of_measure }})</div>
+                    </td>
+                    <td class="small">{{ item.commodity.category.name }}</td>
+                    <td class="text-end fw-semibold">{{ item.quantity_on_hand }}</td>
+                    <td class="text-end">{{ item.reserved_quantity }}</td>
+                    <td class="text-end">{{ item.available_quantity }}</td>
+                    <td class="text-end">{{ item.reorder_level }}</td>
+                    {% if user.role and user.role.role_code != 'ROLE_BRANCH_OFFICER' %}
+                    <td>
+                        <form method="post" action="{% url 'update_reorder_level' item.pk %}" class="d-flex gap-1">
+                            {% csrf_token %}
+                            <input type="number" name="reorder_level" min="0"
+                                   value="{{ item.reorder_level }}"
+                                   class="form-control form-control-sm" style="width: 85px;" required>
+                            <button type="submit" class="btn btn-sm btn-outline-secondary">Save</button>
+                        </form>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center text-muted py-4">No inventory records match the selected filters.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'myapp/js/inventory.js' %}"></script>
+{% endblock %}

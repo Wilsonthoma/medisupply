@@ -1,0 +1,172 @@
+{% extends "myapp/base.html" %}
+{% load static %}
+
+{% block title %}Transfers & Deliveries{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'myapp/css/distribution.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+    <div>
+        <h1 class="h4 mb-1">Stock Transfers &amp; Delivery Confirmation</h1>
+        <p class="text-muted small mb-0">FEFO batch dispatches and receiving facility discrepancy verification</p>
+    </div>
+    {% if user.role and user.role.role_code != 'ROLE_BRANCH_OFFICER' and not dispatch_form %}
+    <a href="{% url 'dispatch_transfer' %}" class="btn btn-sm ms-btn-medical">Dispatch Stock Transfer</a>
+    {% endif %}
+</div>
+
+{% if dispatch_form %}
+<div class="card ms-card mb-4">
+    <div class="card-header bg-white py-3">
+        <h2 class="h6 mb-0">Dispatch FEFO Stock Transfer</h2>
+    </div>
+    <div class="card-body">
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {{ dispatch_form.as_p }}
+            <button type="submit" class="btn ms-btn-medical fw-semibold">Dispatch Transfer</button>
+        </form>
+    </div>
+</div>
+{% endif %}
+
+{% if active_delivery %}
+<div class="card ms-card mb-4">
+    <div class="card-header bg-white py-3">
+        <h2 class="h6 mb-0">Confirm Delivery: {{ active_delivery.delivery_reference }}</h2>
+    </div>
+    <div class="card-body">
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <div class="mb-3" style="max-width: 260px;">
+                <label for="id_delivery_date" class="form-label">Delivery Date</label>
+                <input type="date" name="delivery_date" id="id_delivery_date"
+                       value="{{ active_delivery.delivery_date|date:'Y-m-d' }}"
+                       class="form-control" required>
+            </div>
+            <div class="table-responsive mb-3">
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Commodity</th>
+                            <th>Batch</th>
+                            <th class="text-end">Dispatched</th>
+                            <th>Received</th>
+                            <th class="text-end">Discrepancy</th>
+                            <th>Discrepancy Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in active_delivery.items.all %}
+                        <tr>
+                            <td>{{ item.commodity.name }}</td>
+                            <td class="small">{{ item.batch.batch_number }}</td>
+                            <td class="text-end">{{ item.dispatched_quantity }}</td>
+                            <td>
+                                <input type="number" name="received_qty_{{ item.pk }}"
+                                       min="0" max="{{ item.dispatched_quantity }}"
+                                       value="{{ item.dispatched_quantity }}"
+                                       data-dispatched-qty="{{ item.dispatched_quantity }}"
+                                       data-diff-target="msDiff_{{ item.pk }}"
+                                       class="form-control form-control-sm" style="width: 100px;" required>
+                            </td>
+                            <td class="text-end" id="msDiff_{{ item.pk }}">0</td>
+                            <td>
+                                <input type="text" name="discrepancy_reason_{{ item.pk }}"
+                                       class="form-control form-control-sm"
+                                       placeholder="Required if shortage occurs">
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <button type="submit" class="btn ms-btn-medical fw-semibold">Confirm Delivery</button>
+        </form>
+    </div>
+</div>
+{% endif %}
+
+<div class="row g-4">
+    <div class="col-12 col-xl-6">
+        <div class="card ms-card">
+            <div class="card-header bg-white py-3">
+                <h2 class="h6 mb-0">Stock Transfers</h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Transfer No.</th>
+                            <th>Destination</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for trf in transfers %}
+                        <tr>
+                            <td class="small fw-semibold">{{ trf.transfer_number }}</td>
+                            <td>{{ trf.destination_hospital.name }}</td>
+                            <td><span class="badge bg-info text-dark">{{ trf.get_status_display }}</span></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center text-muted py-4">No transfers found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-xl-6">
+        <div class="card ms-card">
+            <div class="card-header bg-white py-3">
+                <h2 class="h6 mb-0">Deliveries</h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Reference</th>
+                            <th>Receiving Facility</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for dlv in deliveries %}
+                        <tr class="{% if dlv.status == 'CONFIRMED_WITH_DISCREPANCY' %}ms-discrepancy-highlight{% endif %}">
+                            <td class="small fw-semibold">{{ dlv.delivery_reference }}</td>
+                            <td>{{ dlv.receiving_hospital.name }}</td>
+                            <td><span class="badge bg-secondary">{{ dlv.get_status_display }}</span></td>
+                            <td>
+                                {% if dlv.status == 'AWAITING_CONFIRMATION' %}
+                                <a href="{% url 'confirm_delivery' dlv.pk %}" class="btn btn-sm btn-outline-success">
+                                    Confirm
+                                </a>
+                                {% else %}
+                                <span class="small text-muted">Confirmed</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-4">No deliveries found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'myapp/js/distribution.js' %}"></script>
+{% endblock %}

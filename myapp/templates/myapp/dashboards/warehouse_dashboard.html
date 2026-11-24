@@ -1,0 +1,98 @@
+{% extends "myapp/base.html" %}
+{% load static %}
+
+{% block title %}Warehouse & Supply Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'myapp/css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+    <div>
+        <h1 class="h4 mb-1">Warehouse &amp; FEFO Distribution Desk</h1>
+        <p class="text-muted small mb-0">
+            Central Supplier Receipts, Batch Expiry Controls &amp; Stock Transfers
+        </p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'receive_shipment' %}" class="btn btn-sm ms-btn-medical">Receive Shipment</a>
+        <a href="{% url 'transfers_deliveries' %}" class="btn btn-sm btn-outline-primary">Transfers &amp; Deliveries</a>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card ms-card ms-kpi-card ms-kpi-card--teal h-100">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase fw-semibold">Total Stock Units</div>
+                <div class="ms-kpi-value mt-1">{{ total_stock_units }}</div>
+                <div class="small text-muted mt-1">Available &amp; reserved units</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card ms-card ms-kpi-card ms-kpi-card--warn h-100">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase fw-semibold">Expiring in 30 Days</div>
+                <div class="ms-kpi-value mt-1">{{ expiring_soon_count }}</div>
+                <div class="small text-muted mt-1">Prioritize via FEFO</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card ms-card ms-kpi-card h-100">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase fw-semibold">Active Transfers</div>
+                <div class="ms-kpi-value mt-1">{{ active_transfers_count }}</div>
+                <div class="small text-muted mt-1">In progress or dispatched</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card ms-card ms-kpi-card ms-kpi-card--critical h-100">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase fw-semibold">Expired Stock Batches</div>
+                <div class="ms-kpi-value mt-1">{{ expired_stock_count }}</div>
+                <div class="small text-muted mt-1">Blocked from FEFO dispatch</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card ms-card">
+    <div class="card-header bg-white py-3">
+        <h2 class="h6 mb-0">Recent Stock Transfers</h2>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Transfer No.</th>
+                    <th>Source</th>
+                    <th>Destination</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for trf in recent_transfers %}
+                <tr>
+                    <td class="small fw-semibold">{{ trf.transfer_number }}</td>
+                    <td>{{ trf.source_hospital.name }}</td>
+                    <td>{{ trf.destination_hospital.name }}</td>
+                    <td><span class="badge bg-info text-dark">{{ trf.get_status_display }}</span></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center text-muted py-4">No recent stock transfers.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'myapp/js/dashboard.js' %}"></script>
+{% endblock %}

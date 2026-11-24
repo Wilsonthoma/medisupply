@@ -1,0 +1,59 @@
+:root {
+    --ms-bg: #f2f6f8;
+    --ms-surface: #ffffff;
+    --ms-clinical-blue: #0f4c81;
+    --ms-medical-teal: #0d7377;
+    --ms-mint-tint: #e6f4f1;
+    --ms-border: #d5dfe6;
+    --ms-text: #162836;
+    --ms-muted: #546a7b;
+    --ms-alert-bg: #fdf2f2;
+    --ms-alert-text: #9b1c1c;
+    --ms-warn-bg: #fffbeb;
+    --ms-warn-text: #92400e;
+}
+
+body {
+    background-color: var(--ms-bg);
+    color: var(--ms-text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.ms-navbar {
+    background-color: var(--ms-clinical-blue);
+    border-bottom: 3px solid var(--ms-medical-teal);
+}
+
+.ms-main-container {
+    min-height: calc(100vh - 130px);
+    padding-top: 1.5rem;
+    padding-bottom: 2.5rem;
+}
+
+.ms-card {
+    background: var(--ms-surface);
+    border: 1px solid var(--ms-border);
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px rgba(15, 76, 129, 0.06);
+}
+
+.ms-btn-medical {
+    background-color: var(--ms-medical-teal);
+    border-color: var(--ms-medical-teal);
+    color: #ffffff;
+}
+
+.ms-btn-medical:hover,
+.ms-btn-medical:focus {
+    background-color: #09585b;
+    border-color: #09585b;
+    color: #ffffff;
+}
+
+.ms-footer {
+    background: var(--ms-surface);
+    border-top: 1px solid var(--ms-border);
+    color: var(--ms-muted);
+    font-size: 0.875rem;
+    padding: 1rem 0;
+}

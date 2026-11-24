@@ -1,0 +1,95 @@
+{% extends "myapp/base.html" %}
+{% load static %}
+
+{% block title %}Review Requisition {{ branch_request.request_number }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'myapp/css/requests.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+    <div>
+        <h1 class="h4 mb-1">Review Requisition: {{ branch_request.request_number }}</h1>
+        <p class="text-muted small mb-0">
+            From {{ branch_request.branch_hospital.name }} to {{ branch_request.target_hospital.name }}
+        </p>
+    </div>
+    <a href="{% url 'requests_list' %}" class="btn btn-sm btn-outline-secondary">Back to Requests</a>
+</div>
+
+<div class="card ms-card mb-4">
+    <div class="card-body">
+        <div class="row g-3 small">
+            <div class="col-12 col-md-4"><strong>Request Date:</strong> {{ branch_request.request_date }}</div>
+            <div class="col-12 col-md-4"><strong>Current Status:</strong> {{ branch_request.get_status_display }}</div>
+            <div class="col-12 col-md-4"><strong>Requested By:</strong> {{ branch_request.requested_by.username }}</div>
+            {% if branch_request.reason %}
+            <div class="col-12"><strong>Reason:</strong> {{ branch_request.reason }}</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="card ms-card">
+    <div class="card-header bg-white py-3">
+        <h2 class="h6 mb-0">Line Items &amp; Approval Decision</h2>
+    </div>
+    <div class="card-body">
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <div class="table-responsive mb-4">
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Commodity</th>
+                            <th class="text-end">Requested</th>
+                            <th class="text-end">Current Approved</th>
+                            <th>Approve Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in branch_request.items.all %}
+                        <tr>
+                            <td>{{ item.commodity.name }} ({{ item.commodity.unit_of_measure }})</td>
+                            <td class="text-end">{{ item.requested_quantity }}</td>
+                            <td class="text-end">{{ item.approved_quantity }}</td>
+                            <td>
+                                <input type="number" name="approved_qty_{{ item.pk }}"
+                                       min="0" max="{{ item.requested_quantity }}"
+                                       value="{{ item.approved_quantity|default:item.requested_quantity }}"
+                                       class="form-control form-control-sm" style="max-width: 140px;">
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-12 col-md-4">
+                    <label for="id_decision" class="form-label">Decision</label>
+                    <select name="decision" id="id_decision" class="form-select">
+                        <option value="APPROVE">Approve (Full or Partial FEFO Reserve)</option>
+                        <option value="REJECT">Reject Request</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-8">
+                    <label for="id_review_notes" class="form-label">Review Notes</label>
+                    <input type="text" name="review_notes" id="id_review_notes" class="form-control">
+                </div>
+                <div class="col-12" id="msRejectionReasonGroup" style="display: none;">
+                    <label for="id_rejection_reason" class="form-label">Rejection Reason</label>
+                    <textarea name="rejection_reason" id="id_rejection_reason" rows="2" class="form-control"></textarea>
+                </div>
+            </div>
+
+            <button type="submit" class="btn ms-btn-medical fw-semibold">Submit Review Decision</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'myapp/js/requests.js' %}"></script>
+{% endblock %}

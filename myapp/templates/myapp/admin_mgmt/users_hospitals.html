@@ -1,0 +1,89 @@
+{% extends "myapp/base.html" %}
+{% load static %}
+
+{% block title %}Facilities & Users{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'myapp/css/admin_mgmt.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h1 class="h4 mb-1">Facilities &amp; User Accounts</h1>
+    <p class="text-muted small mb-0">Main hospital, linked Nakuru County branch facilities, and role assignments</p>
+</div>
+
+<div class="card ms-card mb-4">
+    <div class="card-header bg-white py-3">
+        <h2 class="h6 mb-0">Health Facilities</h2>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Code</th>
+                    <th>Facility Name</th>
+                    <th>Type</th>
+                    <th>Parent Facility</th>
+                    <th>Sub-County</th>
+                    <th>Active</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for h in hospitals %}
+                <tr>
+                    <td class="small fw-semibold">{{ h.hospital_code }}</td>
+                    <td>{{ h.name }}</td>
+                    <td>{{ h.get_facility_type_display }}</td>
+                    <td class="small">{{ h.parent_hospital.name|default:"-" }}</td>
+                    <td class="small">{{ h.sub_county|default:"-" }}</td>
+                    <td>{% if h.is_active %}Active{% else %}Inactive{% endif %}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4">No facilities configured.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card ms-card">
+    <div class="card-header bg-white py-3">
+        <h2 class="h6 mb-0">System Users</h2>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Username</th>
+                    <th>Full Name</th>
+                    <th>Role</th>
+                    <th>Facility</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr>
+                    <td class="small fw-semibold">{{ u.username }}</td>
+                    <td>{{ u.full_name }}</td>
+                    <td class="small">{{ u.role.role_name|default:"-" }}</td>
+                    <td class="small">{{ u.hospital.name|default:"All Facilities" }}</td>
+                    <td>{% if u.is_active %}Active{% else %}Inactive{% endif %}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-4">No user accounts found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'myapp/js/admin_mgmt.js' %}"></script>
+{% endblock %}

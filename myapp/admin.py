@@ -1,0 +1,40 @@
+from django.contrib import admin
+from .models import (
+    AuditLog,
+    BranchRequest,
+    BranchRequestItem,
+    Commodity,
+    CommodityCategory,
+    Delivery,
+    DeliveryItem,
+    Hospital,
+    Inventory,
+    InventoryBatch,
+    Notification,
+    Role,
+    StockMovement,
+    StockTransfer,
+    StockTransferItem,
+    SupplierReceipt,
+    SupplierReceiptItem,
+    User,
+)
+
+admin.site.register(Role)
+admin.site.register(Hospital)
+admin.site.register(User)
+admin.site.register(CommodityCategory)
+admin.site.register(Commodity)
+admin.site.register(Inventory)
+admin.site.register(InventoryBatch)
+admin.site.register(SupplierReceipt)
+admin.site.register(SupplierReceiptItem)
+admin.site.register(BranchRequest)
+admin.site.register(BranchRequestItem)
+admin.site.register(StockTransfer)
+admin.site.register(StockTransferItem)
+admin.site.register(Delivery)
+admin.site.register(DeliveryItem)
+admin.site.register(StockMovement)
+admin.site.register(Notification)
+admin.site.register(AuditLog)

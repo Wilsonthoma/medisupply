@@ -1,0 +1,94 @@
+{% extends "myapp/base.html" %}
+{% load static %}
+
+{% block title %}Receive Supplier Shipment{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'myapp/css/inventory.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+    <div>
+        <h1 class="h4 mb-1">Receive Supplier Shipment</h1>
+        <p class="text-muted small mb-0">Record inbound medical supply batches and update facility stock</p>
+    </div>
+    <a href="{% url 'inventory_list' %}" class="btn btn-sm btn-outline-secondary">Back to Inventory</a>
+</div>
+
+<div class="card ms-card">
+    <div class="card-body">
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {{ item_formset.management_form }}
+
+            {% if header_form.non_field_errors %}
+            <div class="alert alert-danger small">
+                {% for err in header_form.non_field_errors %}<div>{{ err }}</div>{% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="row g-3 mb-4">
+                <div class="col-12 col-md-4">
+                    <label class="form-label">Receiving Facility</label>
+                    {{ header_form.receiving_hospital }}
+                </div>
+                <div class="col-12 col-md-4">
+                    <label class="form-label">Supplier Name</label>
+                    {{ header_form.supplier_name }}
+                </div>
+                <div class="col-12 col-md-4">
+                    <label class="form-label">Receipt Date</label>
+                    {{ header_form.receipt_date }}
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label">Delivery Note Reference</label>
+                    {{ header_form.delivery_note_ref }}
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label">Remarks</label>
+                    {{ header_form.remarks }}
+                </div>
+            </div>
+
+            <h2 class="h6 mb-3">Shipment Batch Line Items</h2>
+            <div id="msExpiryWarningHint" class="form-text mb-2"></div>
+
+            <div class="table-responsive mb-3">
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Commodity</th>
+                            <th>Batch Number</th>
+                            <th>Expiry Date</th>
+                            <th>Quantity Received</th>
+                            <th>Unit Cost</th>
+                            {% if item_formset.can_delete %}<th>Remove</th>{% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item_form in item_formset %}
+                        <tr>
+                            <td>{{ item_form.commodity }}</td>
+                            <td>{{ item_form.batch_number }}</td>
+                            <td>{{ item_form.expiry_date }}</td>
+                            <td>{{ item_form.quantity_received }}</td>
+                            <td>{{ item_form.unit_cost }}</td>
+                            {% if item_formset.can_delete %}
+                            <td class="text-center">{{ item_form.DELETE }}</td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <button type="submit" class="btn ms-btn-medical fw-semibold">Record Shipment &amp; Update Stock</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'myapp/js/inventory.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends "myapp/base.html" %}
+{% load static %}
+
+{% block title %}Commodity Catalog{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'myapp/css/inventory.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+    <div>
+        <h1 class="h4 mb-1">Medical Commodity Catalog</h1>
+        <p class="text-muted small mb-0">Standardized medicines, consumables, and minimum stock thresholds</p>
+    </div>
+    <a href="{% url 'inventory_list' %}" class="btn btn-sm btn-outline-secondary">Back to Inventory</a>
+</div>
+
+<div class="row g-4">
+    {% if form %}
+    <div class="col-12 col-lg-4">
+        <div class="card ms-card">
+            <div class="card-header bg-white py-3">
+                <h2 class="h6 mb-0">Add Commodity</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-sm ms-btn-medical w-100">Save Commodity</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="col-12 {% if form %}col-lg-8{% endif %}">
+        <div class="card ms-card">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Code</th>
+                            <th>Commodity Name</th>
+                            <th>Category</th>
+                            <th>Unit</th>
+                            <th class="text-end">Min. Stock</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in commodities %}
+                        <tr>
+                            <td class="small fw-semibold">{{ item.commodity_code }}</td>
+                            <td>{{ item.name }}</td>
+                            <td class="small">{{ item.category.name }}</td>
+                            <td class="small">{{ item.unit_of_measure }}</td>
+                            <td class="text-end">{{ item.minimum_stock_level }}</td>
+                            <td><span class="badge bg-light text-dark border">{{ item.get_status_display }}</span></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">No commodities registered.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'myapp/js/inventory.js' %}"></script>
+{% endblock %}

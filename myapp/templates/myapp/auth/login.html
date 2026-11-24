@@ -1,0 +1,76 @@
+{% extends "myapp/base.html" %}
+{% load static %}
+
+{% block title %}Sign In{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'myapp/css/auth.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center ms-auth-wrapper">
+    <div class="col-12 col-sm-10 col-md-6 col-lg-4">
+        <div class="card ms-card ms-auth-card">
+            <div class="card-body p-4">
+                <div class="mb-3 border-bottom pb-3">
+                    <div class="text-uppercase small fw-semibold ms-auth-subtitle">MEDISUPPLY</div>
+                    <h1 class="h4 mb-1 mt-1">Medical Supplies Sign In</h1>
+                    <p class="text-muted small mb-0">
+                        Rift Valley Central Referral Hospital &amp; Nakuru County Facilities
+                    </p>
+                </div>
+
+                <form method="post" action="{% url 'login' %}" novalidate>
+                    {% csrf_token %}
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger py-2 small" role="alert">
+                        {% for error in form.non_field_errors %}
+                        <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">Username</label>
+                        <input type="text" name="username" id="id_username"
+                               value="{{ form.username.value|default:'' }}"
+                               class="form-control {% if form.username.errors %}is-invalid{% endif %}"
+                               autocomplete="username" required autofocus>
+                        {% for error in form.username.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_password" class="form-label">Password</label>
+                        <div class="input-group">
+                            <input type="password" name="password" id="id_password"
+                                   class="form-control {% if form.password.errors %}is-invalid{% endif %}"
+                                   autocomplete="current-password" required>
+                            <button type="button" class="btn btn-outline-secondary ms-toggle-password"
+                                    data-target="id_password" aria-label="Show or hide password">
+                                Show
+                            </button>
+                            {% for error in form.password.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    {% if next %}
+                    <input type="hidden" name="next" value="{{ next }}">
+                    {% endif %}
+
+                    <button type="submit" class="btn ms-btn-medical w-100 fw-semibold">
+                        Sign In
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'myapp/js/auth.js' %}"></script>
+{% endblock %}
