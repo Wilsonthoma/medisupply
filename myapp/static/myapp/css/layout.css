@@ -1,0 +1,10 @@
+.ms-section-header {
+    border-bottom: 1px solid var(--ms-border-subtle);
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.ms-table-card .card-header {
+    background-color: var(--ms-surface-card);
+    border-bottom: 1px solid var(--ms-border-subtle);
+}

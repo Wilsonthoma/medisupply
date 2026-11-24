@@ -1,0 +1,12 @@
+.ms-admin-section-title {
+    color: var(--ms-clinical-blue);
+    font-weight: 600;
+}
+
+.ms-role-tag {
+    background-color: #eef4fa;
+    color: var(--ms-clinical-blue);
+    border: 1px solid #c6daee;
+    font-size: 0.78rem;
+    font-weight: 600;
+}

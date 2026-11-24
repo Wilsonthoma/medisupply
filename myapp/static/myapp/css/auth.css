@@ -1,0 +1,12 @@
+.ms-auth-wrapper {
+    min-height: 75vh;
+}
+
+.ms-auth-card {
+    border-top: 4px solid var(--ms-medical-teal);
+}
+
+.ms-auth-subtitle {
+    color: var(--ms-medical-teal);
+    letter-spacing: 0.08em;
+}

@@ -1,40 +1,62 @@
 :root {
-    --ms-bg: #f2f6f8;
-    --ms-surface: #ffffff;
     --ms-clinical-blue: #0f4c81;
+    --ms-clinical-blue-dark: #09355c;
     --ms-medical-teal: #0d7377;
-    --ms-mint-tint: #e6f4f1;
-    --ms-border: #d5dfe6;
-    --ms-text: #162836;
-    --ms-muted: #546a7b;
-    --ms-alert-bg: #fdf2f2;
+    --ms-medical-teal-dark: #095457;
+    --ms-bg-canvas: #f2f6f8;
+    --ms-surface-card: #ffffff;
+    --ms-text-primary: #1e293b;
+    --ms-text-muted: #52606d;
+    --ms-border-subtle: #d9e2ec;
+    --ms-warn-bg: #fff8e7;
+    --ms-warn-border: #e6a817;
+    --ms-alert-bg: #fdecec;
     --ms-alert-text: #9b1c1c;
-    --ms-warn-bg: #fffbeb;
-    --ms-warn-text: #92400e;
 }
 
 body {
-    background-color: var(--ms-bg);
-    color: var(--ms-text);
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--ms-bg-canvas);
+    color: var(--ms-text-primary);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .ms-navbar {
-    background-color: var(--ms-clinical-blue);
-    border-bottom: 3px solid var(--ms-medical-teal);
+    background: linear-gradient(90deg, var(--ms-clinical-blue) 0%, var(--ms-medical-teal) 100%);
+    box-shadow: 0 2px 6px rgba(15, 76, 129, 0.14);
+}
+
+.ms-navbar .navbar-brand {
+    letter-spacing: 0.04em;
+}
+
+.ms-navbar .nav-link {
+    color: rgba(255, 255, 255, 0.88);
+    font-weight: 500;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.25rem;
+}
+
+.ms-navbar .nav-link:hover,
+.ms-navbar .nav-link:focus,
+.ms-navbar .nav-link.active {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.14);
 }
 
 .ms-main-container {
-    min-height: calc(100vh - 130px);
+    flex: 1 0 auto;
     padding-top: 1.5rem;
-    padding-bottom: 2.5rem;
+    padding-bottom: 2rem;
 }
 
 .ms-card {
-    background: var(--ms-surface);
-    border: 1px solid var(--ms-border);
+    background-color: var(--ms-surface-card);
+    border: 1px solid var(--ms-border-subtle);
     border-radius: 0.5rem;
-    box-shadow: 0 1px 2px rgba(15, 76, 129, 0.06);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
 }
 
 .ms-btn-medical {
@@ -45,15 +67,28 @@ body {
 
 .ms-btn-medical:hover,
 .ms-btn-medical:focus {
-    background-color: #09585b;
-    border-color: #09585b;
+    background-color: var(--ms-medical-teal-dark);
+    border-color: var(--ms-medical-teal-dark);
+    color: #ffffff;
+}
+
+.ms-btn-clinical {
+    background-color: var(--ms-clinical-blue);
+    border-color: var(--ms-clinical-blue);
+    color: #ffffff;
+}
+
+.ms-btn-clinical:hover,
+.ms-btn-clinical:focus {
+    background-color: var(--ms-clinical-blue-dark);
+    border-color: var(--ms-clinical-blue-dark);
     color: #ffffff;
 }
 
 .ms-footer {
-    background: var(--ms-surface);
-    border-top: 1px solid var(--ms-border);
-    color: var(--ms-muted);
-    font-size: 0.875rem;
-    padding: 1rem 0;
+    background-color: var(--ms-surface-card);
+    border-top: 1px solid var(--ms-border-subtle);
+    color: var(--ms-text-muted);
+    font-size: 0.85rem;
+    padding: 0.85rem 0;
 }

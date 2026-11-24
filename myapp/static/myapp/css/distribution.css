@@ -1,0 +1,9 @@
+.ms-discrepancy-highlight {
+    background-color: var(--ms-alert-bg);
+    color: var(--ms-alert-text);
+}
+
+.ms-transfer-meta {
+    font-size: 0.85rem;
+    color: var(--ms-text-muted);
+}
