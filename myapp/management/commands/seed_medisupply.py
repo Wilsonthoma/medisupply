@@ -1,4 +1,4 @@
-from django.contrib.auth import get_user_model
+﻿from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
@@ -6,13 +6,13 @@ from myapp.models import Hospital, Role
 
 
 class Command(BaseCommand):
-    help = "Seed MEDISUPPLY roles, Nakuru County facilities, and role-mapped user accounts."
+    help = "Seed MEDISUPPLY roles, Nakuru County facilities, and simple dev user accounts."
 
     def add_arguments(self, parser):
         parser.add_argument(
             "--password",
-            default="Medisupply@2026",
-            help="Password applied to seeded user accounts (default: Medisupply@2026).",
+            default="lucy",
+            help="Password applied to seeded user accounts (default: lucy).",
         )
 
     @transaction.atomic
@@ -81,54 +81,12 @@ class Command(BaseCommand):
 
         # (username, full_name, email, role_code, hospital, is_staff)
         users_to_seed = [
-            (
-                "sysadmin",
-                "System Administrator",
-                "sysadmin@medisupply.local",
-                "ROLE_ADMIN",
-                main_hospital,
-                True,
-            ),
-            (
-                "rvcrh_admin",
-                "RVCRH Hospital Administrator",
-                "admin.rvcrh@medisupply.local",
-                "ROLE_HOSPITAL_ADMIN",
-                main_hospital,
-                True,
-            ),
-            (
-                "rvcrh_warehouse",
-                "RVCRH Warehouse Officer",
-                "warehouse.rvcrh@medisupply.local",
-                "ROLE_WAREHOUSE",
-                main_hospital,
-                False,
-            ),
-            (
-                "subukia_officer",
-                "Subukia Facility Officer",
-                "officer.subukia@medisupply.local",
-                "ROLE_BRANCH_OFFICER",
-                branches["Subukia Community Clinic"],
-                False,
-            ),
-            (
-                "bahati_officer",
-                "Bahati Facility Officer",
-                "officer.bahati@medisupply.local",
-                "ROLE_BRANCH_OFFICER",
-                branches["Bahati Sub-County Hospital"],
-                False,
-            ),
-            (
-                "gilgil_officer",
-                "Gilgil Facility Officer",
-                "officer.gilgil@medisupply.local",
-                "ROLE_BRANCH_OFFICER",
-                branches["Gilgil Health Centre"],
-                False,
-            ),
+            ("admin",     "System Administrator",         "admin@medisupply.local",     "ROLE_ADMIN",          main_hospital, True),
+            ("hospadmin", "RVCRH Hospital Administrator", "hospadmin@medisupply.local", "ROLE_HOSPITAL_ADMIN", main_hospital, True),
+            ("warehouse", "RVCRH Warehouse Officer",      "warehouse@medisupply.local", "ROLE_WAREHOUSE",      main_hospital, False),
+            ("subukia",   "Subukia Facility Officer",     "subukia@medisupply.local",   "ROLE_BRANCH_OFFICER", branches["Subukia Community Clinic"], False),
+            ("bahati",    "Bahati Facility Officer",      "bahati@medisupply.local",    "ROLE_BRANCH_OFFICER", branches["Bahati Sub-County Hospital"], False),
+            ("gilgil",    "Gilgil Facility Officer",      "gilgil@medisupply.local",    "ROLE_BRANCH_OFFICER", branches["Gilgil Health Centre"], False),
         ]
 
         for username, full_name, email, role_code, hospital, is_staff in users_to_seed:
@@ -155,6 +113,7 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"Seeded {len(roles)} roles, 4 facilities, and {len(users_to_seed)} users (password: {password})."
+                f"Seeded {len(roles)} roles, 4 facilities, and {len(users_to_seed)} users "
+                f"(password: {password})."
             )
         )

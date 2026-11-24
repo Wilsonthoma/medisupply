@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+﻿document.addEventListener("DOMContentLoaded", () => {
     const receivedInputs = document.querySelectorAll("input[data-dispatched-qty]");
 
     receivedInputs.forEach((input) => {

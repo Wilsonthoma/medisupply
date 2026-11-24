@@ -1,31 +1,23 @@
-{% extends "myapp/base.html" %}
+﻿{% extends "myapp/base.html" %}
 {% load static %}
 
 {% block title %}Signed Out{% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'myapp/css/auth.css' %}">
-{% endblock %}
-
-{% block content %}
-<div class="row justify-content-center align-items-center ms-auth-wrapper">
+{% block auth_content %}
+<div class="container">
+  <div class="row justify-content-center">
     <div class="col-12 col-sm-10 col-md-6 col-lg-4">
-        <div class="card ms-card ms-auth-card">
-            <div class="card-body p-4 text-center">
-                <div class="text-uppercase small fw-semibold ms-auth-subtitle">MEDISUPPLY</div>
-                <h1 class="h5 mb-2 mt-1">Session Ended</h1>
-                <p class="text-muted small mb-4">
-                    You have signed out of the Medical Supplies Distribution System.
-                </p>
-                <a href="{% url 'login' %}" class="btn ms-btn-medical w-100 fw-semibold">
-                    Sign In Again
-                </a>
-            </div>
+      <div class="ms-auth-card text-center">
+        <div class="ms-auth-header">
+          <span class="ms-auth-code">MEDISUPPLY</span>
+          <h1 class="ms-auth-title">Signed Out</h1>
+          <p class="ms-auth-subtitle">Your session has ended.</p>
         </div>
+        <div class="ms-auth-body">
+          <a href="{% url 'login' %}" class="btn ms-btn-primary w-100">Sign In Again</a>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
-{% endblock %}
-
-{% block extra_js %}
-<script src="{% static 'myapp/js/auth.js' %}"></script>
 {% endblock %}

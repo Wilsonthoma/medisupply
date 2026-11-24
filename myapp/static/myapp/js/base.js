@@ -1,25 +1,42 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const currentPath = window.location.pathname;
-    const navLinks = document.querySelectorAll(".ms-navbar .nav-link");
+﻿document.addEventListener("DOMContentLoaded", () => {
+  const navToggle = document.getElementById("msNavToggle");
+  const sidebar = document.getElementById("msSidebar");
 
-    navLinks.forEach((link) => {
-        const href = link.getAttribute("href");
-        if (!href) return;
-        if (href === currentPath || (href !== "/" && currentPath.startsWith(href))) {
-            link.classList.add("active");
-            link.setAttribute("aria-current", "page");
-        }
+  if (navToggle && sidebar) {
+    navToggle.addEventListener("click", () => {
+      const isOpen = sidebar.classList.toggle("is-open");
+      navToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
     });
 
-    const autoDismissAlerts = document.querySelectorAll(".ms-auto-dismiss");
-    autoDismissAlerts.forEach((alertEl) => {
-        window.setTimeout(() => {
-            if (window.bootstrap && window.bootstrap.Alert) {
-                const instance = window.bootstrap.Alert.getOrCreateInstance(alertEl);
-                instance.close();
-            } else {
-                alertEl.remove();
-            }
-        }, 6000);
+    document.addEventListener("click", (event) => {
+      if (
+        sidebar.classList.contains("is-open") &&
+        !sidebar.contains(event.target) &&
+        !navToggle.contains(event.target)
+      ) {
+        sidebar.classList.remove("is-open");
+        navToggle.setAttribute("aria-expanded", "false");
+      }
     });
+  }
+
+  document.querySelectorAll(".ms-alert .ms-alert-close").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const alertEl = btn.closest(".ms-alert");
+      if (alertEl) alertEl.remove();
+    });
+  });
 });
+
+window.MedisupplyUtils = {
+  getCsrfToken() {
+    const tokenInput = document.querySelector("input[name='csrfmiddlewaretoken']");
+    if (tokenInput && tokenInput.value) return tokenInput.value;
+
+    const match = document.cookie
+      .split(";")
+      .map((part) => part.trim())
+      .find((part) => part.startsWith("csrftoken="));
+    return match ? decodeURIComponent(match.split("=")[1]) : "";
+  },
+};

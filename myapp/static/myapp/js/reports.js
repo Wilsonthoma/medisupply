@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+﻿document.addEventListener("DOMContentLoaded", () => {
     const reportTables = document.querySelectorAll(".table");
     reportTables.forEach((table) => {
         table.classList.add("ms-report-table");

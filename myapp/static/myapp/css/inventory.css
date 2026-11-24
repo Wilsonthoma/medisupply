@@ -1,12 +1,22 @@
-.ms-stock-low {
-    background-color: var(--ms-warn-bg);
+.ms-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  margin-bottom: 1rem;
 }
 
-.ms-batch-expired {
-    background-color: var(--ms-alert-bg);
-    color: var(--ms-alert-text);
+.ms-fefo-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.78rem;
+  color: var(--ms-slate);
 }
 
-.ms-reorder-input {
-    max-width: 90px;
+.ms-batch-code {
+  font-family: Consolas, Monaco, "Courier New", monospace;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ms-navy);
 }

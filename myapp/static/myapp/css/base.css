@@ -1,94 +1,407 @@
 :root {
-    --ms-clinical-blue: #0f4c81;
-    --ms-clinical-blue-dark: #09355c;
-    --ms-medical-teal: #0d7377;
-    --ms-medical-teal-dark: #095457;
-    --ms-bg-canvas: #f2f6f8;
-    --ms-surface-card: #ffffff;
-    --ms-text-primary: #1e293b;
-    --ms-text-muted: #52606d;
-    --ms-border-subtle: #d9e2ec;
-    --ms-warn-bg: #fff8e7;
-    --ms-warn-border: #e6a817;
-    --ms-alert-bg: #fdecec;
-    --ms-alert-text: #9b1c1c;
+  --ms-navy: #0f2942;
+  --ms-navy-dark: #091b2c;
+  --ms-teal: #0d7377;
+  --ms-teal-hover: #09585b;
+  --ms-teal-soft: #e6f4f4;
+  --ms-slate: #475569;
+  --ms-slate-light: #64748b;
+  --ms-bg: #f4f7f9;
+  --ms-surface: #ffffff;
+  --ms-border: #dbe4ec;
+  --ms-success-bg: #e7f5ee;
+  --ms-success-fg: #146c43;
+  --ms-warn-bg: #fff8e6;
+  --ms-warn-fg: #8a5a00;
+  --ms-danger-bg: #fdecec;
+  --ms-danger-fg: #9b1c1c;
+  --ms-topbar-h: 64px;
+  --ms-sidebar-w: 248px;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
 body {
-    background-color: var(--ms-bg-canvas);
-    color: var(--ms-text-primary);
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+  margin: 0;
+  padding: 0;
+  background-color: var(--ms-bg);
+  color: #1e293b;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.5;
 }
 
-.ms-navbar {
-    background: linear-gradient(90deg, var(--ms-clinical-blue) 0%, var(--ms-medical-teal) 100%);
-    box-shadow: 0 2px 6px rgba(15, 76, 129, 0.14);
+.ms-auth-main {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: linear-gradient(180deg, #eef4f8 0%, #f8fafc 100%);
+  padding: 1.5rem;
 }
 
-.ms-navbar .navbar-brand {
-    letter-spacing: 0.04em;
+.ms-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--ms-topbar-h);
+  background-color: var(--ms-navy);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.25rem;
+  z-index: 1030;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.ms-navbar .nav-link {
-    color: rgba(255, 255, 255, 0.88);
-    font-weight: 500;
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.25rem;
+.ms-topbar-left,
+.ms-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
 }
 
-.ms-navbar .nav-link:hover,
-.ms-navbar .nav-link:focus,
-.ms-navbar .nav-link.active {
-    color: #ffffff;
-    background-color: rgba(255, 255, 255, 0.14);
+.ms-nav-toggle {
+  display: none;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
-.ms-main-container {
-    flex: 1 0 auto;
-    padding-top: 1.5rem;
-    padding-bottom: 2rem;
+.ms-burger,
+.ms-burger::before,
+.ms-burger::after {
+  display: block;
+  width: 16px;
+  height: 2px;
+  background-color: #ffffff;
+  position: relative;
+  transition: transform 0.2s ease;
+}
+
+.ms-burger::before,
+.ms-burger::after {
+  content: "";
+  position: absolute;
+  left: 0;
+}
+
+.ms-burger::before { top: -5px; }
+.ms-burger::after { top: 5px; }
+
+.ms-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  text-decoration: none;
+  color: #ffffff;
+}
+
+.ms-brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  background-color: var(--ms-teal);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+}
+
+.ms-brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.ms-brand-text strong {
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+}
+
+.ms-brand-text small {
+  font-size: 0.72rem;
+  color: #cbd5e1;
+}
+
+.ms-context-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  background-color: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 6px;
+  padding: 0.3rem 0.65rem;
+  font-size: 0.8rem;
+}
+
+.ms-context-label {
+  color: #94a3b8;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+}
+
+.ms-context-value {
+  color: #f8fafc;
+  font-weight: 500;
+}
+
+.ms-user-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.2;
+}
+
+.ms-username {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.ms-role-tag {
+  font-size: 0.72rem;
+  color: #99f6e4;
+}
+
+.ms-btn-outline {
+  color: #e2e8f0;
+  border-color: rgba(226, 232, 240, 0.35);
+}
+
+.ms-btn-outline:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border-color: #ffffff;
+}
+
+.ms-shell {
+  display: flex;
+  padding-top: var(--ms-topbar-h);
+  min-height: 100vh;
+}
+
+.ms-sidebar {
+  width: var(--ms-sidebar-w);
+  flex-shrink: 0;
+  background-color: var(--ms-surface);
+  border-right: 1px solid var(--ms-border);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: fixed;
+  top: var(--ms-topbar-h);
+  bottom: 0;
+  left: 0;
+  overflow-y: auto;
+  z-index: 1020;
+}
+
+.ms-nav {
+  padding: 1rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.ms-nav-section {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ms-slate-light);
+  padding: 0.5rem 0.75rem 0.25rem;
+}
+
+.ms-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 6px;
+  color: #334155;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 500;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.ms-nav-link:hover {
+  background-color: #f1f5f9;
+  color: var(--ms-navy);
+}
+
+.ms-nav-link.is-active {
+  background-color: var(--ms-teal-soft);
+  color: var(--ms-teal-hover);
+  font-weight: 600;
+}
+
+.ms-nav-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+  opacity: 0.55;
+}
+
+.ms-nav-link.is-active .ms-nav-indicator {
+  opacity: 1;
+}
+
+.ms-sidebar-footer {
+  padding: 0.9rem 1rem;
+  border-top: 1px solid var(--ms-border);
+  background-color: #f8fafc;
+}
+
+.ms-scope-note {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.75rem;
+  color: var(--ms-slate);
+  gap: 0.15rem;
+}
+
+.ms-main {
+  margin-left: var(--ms-sidebar-w);
+  flex: 1;
+  min-width: 0;
+  padding: 1.5rem;
+}
+
+.ms-content {
+  max-width: 1320px;
+  margin: 0 auto;
+}
+
+.ms-page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.ms-page-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--ms-navy);
+  margin: 0;
+}
+
+.ms-page-subtitle {
+  font-size: 0.85rem;
+  color: var(--ms-slate);
+  margin: 0.15rem 0 0;
 }
 
 .ms-card {
-    background-color: var(--ms-surface-card);
-    border: 1px solid var(--ms-border-subtle);
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+  background-color: var(--ms-surface);
+  border: 1px solid var(--ms-border);
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(15, 41, 66, 0.04);
 }
 
-.ms-btn-medical {
-    background-color: var(--ms-medical-teal);
-    border-color: var(--ms-medical-teal);
-    color: #ffffff;
+.ms-card-header {
+  padding: 0.9rem 1.15rem;
+  border-bottom: 1px solid var(--ms-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
 }
 
-.ms-btn-medical:hover,
-.ms-btn-medical:focus {
-    background-color: var(--ms-medical-teal-dark);
-    border-color: var(--ms-medical-teal-dark);
-    color: #ffffff;
+.ms-card-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ms-navy);
 }
 
-.ms-btn-clinical {
-    background-color: var(--ms-clinical-blue);
-    border-color: var(--ms-clinical-blue);
-    color: #ffffff;
+.ms-card-body {
+  padding: 1.15rem;
 }
 
-.ms-btn-clinical:hover,
-.ms-btn-clinical:focus {
-    background-color: var(--ms-clinical-blue-dark);
-    border-color: var(--ms-clinical-blue-dark);
-    color: #ffffff;
+.ms-btn-primary {
+  background-color: var(--ms-teal);
+  border-color: var(--ms-teal);
+  color: #ffffff;
+  font-weight: 500;
 }
 
-.ms-footer {
-    background-color: var(--ms-surface-card);
-    border-top: 1px solid var(--ms-border-subtle);
-    color: var(--ms-text-muted);
-    font-size: 0.85rem;
-    padding: 0.85rem 0;
+.ms-btn-primary:hover,
+.ms-btn-primary:focus {
+  background-color: var(--ms-teal-hover);
+  border-color: var(--ms-teal-hover);
+  color: #ffffff;
+}
+
+.ms-badge {
+  display: inline-block;
+  padding: 0.22rem 0.55rem;
+  border-radius: 4px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.ms-badge-ok { background-color: var(--ms-success-bg); color: var(--ms-success-fg); }
+.ms-badge-warn { background-color: var(--ms-warn-bg); color: var(--ms-warn-fg); }
+.ms-badge-alert { background-color: var(--ms-danger-bg); color: var(--ms-danger-fg); }
+.ms-badge-neutral { background-color: #e2e8f0; color: #334155; }
+
+.ms-alerts {
+  max-width: 1320px;
+  margin: 0 auto 1rem;
+}
+
+.ms-auth-alerts {
+  width: 100%;
+  max-width: 440px;
+}
+
+.ms-alert {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 991.98px) {
+  .ms-nav-toggle { display: inline-flex; }
+  .ms-context-pill { display: none; }
+
+  .ms-sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+  }
+
+  .ms-sidebar.is-open {
+    transform: translateX(0);
+    box-shadow: 4px 0 18px rgba(15, 41, 66, 0.14);
+  }
+
+  .ms-main {
+    margin-left: 0;
+    padding: 1rem;
+  }
 }

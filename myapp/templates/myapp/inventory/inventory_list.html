@@ -1,0 +1,86 @@
+﻿{% extends "myapp/base.html" %}
+{% load static %}
+
+{% block title %}FEFO Batch Inventory{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'myapp/css/inventory.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="ms-page-header">
+  <div>
+    <h1 class="ms-page-title">FEFO Batch Inventory</h1>
+    <p class="ms-page-subtitle">First-Expired, First-Out stock ledger ordered by earliest expiry date</p>
+  </div>
+  <div class="ms-fefo-legend">
+    <span><span class="ms-badge ms-badge-ok">OK</span> Normal shelf life</span>
+    <span><span class="ms-badge ms-badge-warn">SOON</span> Near expiry</span>
+    <span><span class="ms-badge ms-badge-alert">EXPIRED</span> Quarantine / review</span>
+  </div>
+</div>
+
+<div class="ms-card">
+  <div class="ms-card-body border-bottom">
+    <div class="ms-filter-bar mb-0">
+      <input
+        type="search"
+        id="msInventorySearch"
+        class="form-control form-control-sm"
+        style="max-width: 280px;"
+        placeholder="Search item, batch code, facility..."
+        aria-label="Search inventory batches"
+      >
+      <select id="msExpiryFilter" class="form-select form-select-sm" style="max-width: 200px;" aria-label="Filter by expiry status">
+        <option value="all">All Expiry Statuses</option>
+        <option value="ok">Normal</option>
+        <option value="soon">Expiring Soon</option>
+        <option value="expired">Expired</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Batch Code</th>
+          <th>Medical Supply Item</th>
+          <th>Facility</th>
+          <th>Expiry Date</th>
+          <th class="text-end">Available Qty</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for batch in batches %}
+        <tr data-batch-row data-expiry-status="{{ batch.expiry_status|default:'ok' }}">
+          <td class="ms-batch-code">{{ batch.batch_number|default:batch.pk }}</td>
+          <td class="fw-medium">{{ batch.supply_item.name|default:batch.item.name|default:"-" }}</td>
+          <td>{{ batch.hospital.name|default:batch.facility.name|default:"-" }}</td>
+          <td>{{ batch.expiry_date|date:"d M Y" }}</td>
+          <td class="text-end fw-semibold">{{ batch.quantity_available|default:batch.quantity|default:0 }}</td>
+          <td>
+            {% if batch.expiry_status == "expired" %}
+              <span class="ms-badge ms-badge-alert">Expired</span>
+            {% elif batch.expiry_status == "soon" %}
+              <span class="ms-badge ms-badge-warn">Expiring Soon</span>
+            {% else %}
+              <span class="ms-badge ms-badge-ok">Active</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="text-center text-muted py-4">No inventory batches found for your current scope.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'myapp/js/inventory.js' %}" defer></script>
+{% endblock %}

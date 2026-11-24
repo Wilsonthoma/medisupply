@@ -1,4 +1,4 @@
-from django.contrib import messages
+﻿from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -40,7 +40,7 @@ def stock_movements_view(request):
 @login_required
 def notifications_view(request):
     user_notifications = Notification.objects.filter(
-        recipient_user=request.user
+        recipient=request.user
     ).select_related("hospital").order_by("-created_at")
     return render(
         request,
@@ -53,7 +53,7 @@ def notifications_view(request):
 @require_POST
 def mark_notification_read_view(request, notification_id):
     notif = get_object_or_404(
-        Notification, pk=notification_id, recipient_user=request.user
+        Notification, pk=notification_id, recipient=request.user
     )
     if not notif.is_read:
         notif.is_read = True

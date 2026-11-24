@@ -1,8 +1,7 @@
-from django.contrib import messages
+﻿from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
-from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
@@ -31,8 +30,7 @@ def login_view(request):
 
         if user is not None and user.is_active:
             login(request, user)
-            user.last_login_at = timezone.now()
-            user.save(update_fields=["last_login_at", "updated_at"])
+            user.save(update_fields=["updated_at"])
 
             AuditLog.objects.create(
                 user=user,

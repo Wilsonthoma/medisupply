@@ -1,18 +1,29 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const decisionSelect = document.getElementById("id_decision");
-    const rejectionGroup = document.getElementById("msRejectionReasonGroup");
-    const rejectionTextarea = document.getElementById("id_rejection_reason");
+﻿document.addEventListener("DOMContentLoaded", () => {
+  const statusFilter = document.getElementById("msRequisitionStatusFilter");
+  const searchInput = document.getElementById("msRequisitionSearch");
+  const rows = document.querySelectorAll("tbody tr[data-req-row]");
 
-    if (!decisionSelect || !rejectionGroup) return;
+  const filterRequisitions = () => {
+    const query = searchInput ? searchInput.value.trim().toLowerCase() : "";
+    const status = statusFilter ? statusFilter.value.toLowerCase() : "all";
 
-    const syncRejectionVisibility = () => {
-        const isReject = decisionSelect.value === "REJECT";
-        rejectionGroup.style.display = isReject ? "block" : "none";
-        if (rejectionTextarea) {
-            rejectionTextarea.required = isReject;
-        }
-    };
+    rows.forEach((row) => {
+      const textMatch = row.textContent.toLowerCase().includes(query);
+      const rowStatus = (row.getAttribute("data-req-status") || "").toLowerCase();
+      const statusMatch = status === "all" || rowStatus === status;
+      row.style.display = textMatch && statusMatch ? "" : "none";
+    });
+  };
 
-    decisionSelect.addEventListener("change", syncRejectionVisibility);
-    syncRejectionVisibility();
+  if (statusFilter) statusFilter.addEventListener("change", filterRequisitions);
+  if (searchInput) searchInput.addEventListener("input", filterRequisitions);
+
+  document.querySelectorAll("form[data-confirm-action]").forEach((form) => {
+    form.addEventListener("submit", (event) => {
+      const message = form.getAttribute("data-confirm-action") || "Confirm this requisition action?";
+      if (!window.confirm(message)) {
+        event.preventDefault();
+      }
+    });
+  });
 });

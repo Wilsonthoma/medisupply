@@ -1,29 +1,111 @@
+.ms-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
 .ms-kpi-card {
-    border-left: 4px solid var(--ms-clinical-blue);
+  background-color: var(--ms-surface);
+  border: 1px solid var(--ms-border);
+  border-top: 3px solid var(--ms-teal);
+  border-radius: 8px;
+  padding: 1rem 1.15rem;
 }
 
-.ms-kpi-card--teal {
-    border-left-color: var(--ms-medical-teal);
+.ms-kpi-card.is-warning {
+  border-top-color: #b45309;
 }
 
-.ms-kpi-card--warn {
-    border-left-color: var(--ms-warn-border);
+.ms-kpi-card.is-critical {
+  border-top-color: #b91c1c;
 }
 
-.ms-kpi-card--critical {
-    border-left-color: var(--ms-alert-text);
+.ms-kpi-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ms-slate);
 }
 
 .ms-kpi-value {
-    font-size: 1.65rem;
-    font-weight: 700;
-    color: var(--ms-text-primary);
-    line-height: 1.2;
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: var(--ms-navy);
+  margin: 0.25rem 0 0.15rem;
 }
 
-.ms-facility-badge {
-    background-color: #e6f2f2;
-    color: var(--ms-medical-teal-dark);
-    border: 1px solid #b5d8d9;
-    font-weight: 600;
+.ms-kpi-sub {
+  font-size: 0.78rem;
+  color: var(--ms-slate-light);
+}
+
+.ms-dash-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 1.25rem;
+}
+
+.ms-notif-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ms-notif-item {
+  padding: 0.85rem 1.15rem;
+  border-bottom: 1px solid var(--ms-border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.ms-notif-item:last-child {
+  border-bottom: none;
+}
+
+.ms-notif-item.is-unread {
+  background-color: #f8fcfc;
+}
+
+.ms-notif-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.ms-notif-title {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--ms-navy);
+}
+
+.ms-notif-time {
+  font-size: 0.74rem;
+  color: var(--ms-slate-light);
+  white-space: nowrap;
+}
+
+.ms-notif-msg {
+  font-size: 0.82rem;
+  color: var(--ms-slate);
+  margin: 0;
+}
+
+@media (max-width: 1199.98px) {
+  .ms-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ms-dash-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .ms-kpi-grid {
+    grid-template-columns: 1fr;
+  }
 }

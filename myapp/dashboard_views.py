@@ -1,4 +1,4 @@
-from datetime import timedelta
+﻿from datetime import timedelta
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import F, Sum
@@ -73,7 +73,7 @@ def dashboard_view(request):
     ).count()
 
     unread_notifications = Notification.objects.filter(
-        recipient_user=user, is_read=False
+        recipient=user, is_read=False
     ).order_by("-created_at")[:8]
 
     facilities = Hospital.objects.select_related("parent_hospital").filter(

@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+﻿document.addEventListener("DOMContentLoaded", () => {
     const tables = document.querySelectorAll(".table");
     tables.forEach((table) => {
         if (!table.closest(".table-responsive")) {

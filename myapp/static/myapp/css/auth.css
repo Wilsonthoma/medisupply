@@ -1,12 +1,54 @@
-.ms-auth-wrapper {
-    min-height: 75vh;
+.ms-auth-card {
+  border-radius: 10px;
+  border: 1px solid var(--ms-border);
+  background-color: var(--ms-surface);
+  box-shadow: 0 6px 24px rgba(15, 41, 66, 0.06);
 }
 
-.ms-auth-card {
-    border-top: 4px solid var(--ms-medical-teal);
+.ms-auth-header {
+  border-bottom: 1px solid var(--ms-border);
+  padding: 1.25rem 1.5rem 1rem;
+  background-color: var(--ms-navy);
+  color: #ffffff;
+  border-radius: 10px 10px 0 0;
+}
+
+.ms-auth-code {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #99f6e4;
+  margin-bottom: 0.25rem;
+}
+
+.ms-auth-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
 }
 
 .ms-auth-subtitle {
-    color: var(--ms-medical-teal);
-    letter-spacing: 0.08em;
+  margin: 0.2rem 0 0;
+  font-size: 0.8rem;
+  color: #cbd5e1;
+}
+
+.ms-auth-body {
+  padding: 1.5rem;
+}
+
+.ms-toggle-password {
+  min-width: 64px;
+  font-weight: 500;
+}
+
+.ms-auth-footer {
+  padding: 0.85rem 1.5rem;
+  background-color: #f8fafc;
+  border-top: 1px solid var(--ms-border);
+  border-radius: 0 0 10px 10px;
+  font-size: 0.76rem;
+  color: var(--ms-slate);
 }

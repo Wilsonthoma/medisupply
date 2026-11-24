@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+﻿document.addEventListener("DOMContentLoaded", () => {
     const sectionHeadings = document.querySelectorAll("h2.h6");
     sectionHeadings.forEach((heading) => {
         heading.classList.add("ms-admin-section-title");
