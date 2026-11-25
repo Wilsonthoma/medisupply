@@ -8,88 +8,118 @@
 {% endblock %}
 
 {% block content %}
-<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
-    <div>
-        <h1 class="h4 mb-1">Warehouse &amp; FEFO Distribution Desk</h1>
-        <p class="text-muted small mb-0">
-            Central Supplier Receipts, Batch Expiry Controls &amp; Stock Transfers
-        </p>
-    </div>
-    <div class="d-flex gap-2">
-        <a href="{% url 'receive_shipment' %}" class="btn btn-sm ms-btn-medical">Receive Shipment</a>
-        <a href="{% url 'transfers_deliveries' %}" class="btn btn-sm btn-outline-primary">Transfers &amp; Deliveries</a>
-    </div>
+<div class="ms-dash-header">
+  <div>
+    <h1>Warehouse &amp; FEFO Distribution Desk</h1>
+    <p>Central Supplier Receipts, Batch Expiry Controls &amp; Stock Transfers</p>
+  </div>
+  <div class="ms-dash-actions">
+    <a href="{% url 'receive_shipment' %}" class="ms-btn-medical">Receive Shipment</a>
+    <a href="{% url 'transfers_deliveries' %}" class="ms-btn-outline">Transfers &amp; Deliveries</a>
+  </div>
 </div>
 
-<div class="row g-3 mb-4">
-    <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card ms-card ms-kpi-card ms-kpi-card--teal h-100">
-            <div class="card-body">
-                <div class="text-muted small text-uppercase fw-semibold">Total Stock Units</div>
-                <div class="ms-kpi-value mt-1">{{ total_stock_units }}</div>
-                <div class="small text-muted mt-1">Available &amp; reserved units</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card ms-card ms-kpi-card ms-kpi-card--warn h-100">
-            <div class="card-body">
-                <div class="text-muted small text-uppercase fw-semibold">Expiring in 30 Days</div>
-                <div class="ms-kpi-value mt-1">{{ expiring_soon_count }}</div>
-                <div class="small text-muted mt-1">Prioritize via FEFO</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card ms-card ms-kpi-card h-100">
-            <div class="card-body">
-                <div class="text-muted small text-uppercase fw-semibold">Active Transfers</div>
-                <div class="ms-kpi-value mt-1">{{ active_transfers_count }}</div>
-                <div class="small text-muted mt-1">In progress or dispatched</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card ms-card ms-kpi-card ms-kpi-card--critical h-100">
-            <div class="card-body">
-                <div class="text-muted small text-uppercase fw-semibold">Expired Stock Batches</div>
-                <div class="ms-kpi-value mt-1">{{ expired_stock_count }}</div>
-                <div class="small text-muted mt-1">Blocked from FEFO dispatch</div>
-            </div>
-        </div>
-    </div>
+<div class="ms-kpi-grid">
+  <div class="ms-kpi-card">
+    <span class="ms-kpi-label">Total Stock Units</span>
+    <div class="ms-kpi-value">{{ total_stock_units|default:"0" }}</div>
+    <span class="ms-kpi-sub">Available &amp; reserved units</span>
+    <a href="{% url 'inventory_list' %}" class="ms-kpi-link">View inventory →</a>
+  </div>
+
+  <div class="ms-kpi-card ms-kpi-card--warn">
+    <span class="ms-kpi-label">Expiring in 30 Days</span>
+    <div class="ms-kpi-value">{{ expiring_soon_count|default:"0" }}</div>
+    <span class="ms-kpi-sub">Prioritize via FEFO</span>
+    <a href="{% url 'inventory_list' %}?expiring=30" class="ms-kpi-link">Review batches →</a>
+  </div>
+
+  <div class="ms-kpi-card">
+    <span class="ms-kpi-label">Active Transfers</span>
+    <div class="ms-kpi-value">{{ active_transfers_count|default:"0" }}</div>
+    <span class="ms-kpi-sub">In progress or dispatched</span>
+    <a href="{% url 'transfers_deliveries' %}" class="ms-kpi-link">Track transfers →</a>
+  </div>
+
+  <div class="ms-kpi-card ms-kpi-card--critical">
+    <span class="ms-kpi-label">Expired Stock Batches</span>
+    <div class="ms-kpi-value">{{ expired_stock_count|default:"0" }}</div>
+    <span class="ms-kpi-sub">Blocked from FEFO dispatch</span>
+    <a href="{% url 'inventory_list' %}?expired=1" class="ms-kpi-link">Inspect batches →</a>
+  </div>
 </div>
 
-<div class="card ms-card">
-    <div class="card-header bg-white py-3">
-        <h2 class="h6 mb-0">Recent Stock Transfers</h2>
+<div class="ms-dash-grid">
+  <section class="ms-table-card">
+    <header class="card-header">
+      <h2>Recent Stock Transfers</h2>
+      <a href="{% url 'transfers_deliveries' %}">View all</a>
+    </header>
+    <div class="ms-table-wrap">
+      <table class="ms-table">
+        <thead>
+          <tr>
+            <th>Transfer No.</th>
+            <th>Source</th>
+            <th>Destination</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for trf in recent_transfers %}
+          <tr>
+            <td><span class="ms-ref">{{ trf.transfer_number }}</span></td>
+            <td>{{ trf.source_hospital.name }}</td>
+            <td>{{ trf.destination_hospital.name }}</td>
+            <td>
+              {% with s=trf.status %}
+              <span class="ms-badge
+                {% if s == 'PREPARING' %}ms-badge--pending
+                {% elif s == 'DISPATCHED' or s == 'IN_TRANSIT' %}ms-badge--dispatch
+                {% elif s == 'DELIVERED' or s == 'COMPLETED' %}ms-badge--completed
+                {% elif s == 'CANCELLED' %}ms-badge--cancelled
+                {% else %}ms-badge--review{% endif %}">
+                {{ trf.get_status_display }}
+              </span>
+              {% endwith %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4" class="ms-empty">
+              No recent stock transfers. <a href="{% url 'transfers_deliveries' %}">Create a dispatch</a>.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-    <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-            <thead class="table-light">
-                <tr>
-                    <th>Transfer No.</th>
-                    <th>Source</th>
-                    <th>Destination</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for trf in recent_transfers %}
-                <tr>
-                    <td class="small fw-semibold">{{ trf.transfer_number }}</td>
-                    <td>{{ trf.source_hospital.name }}</td>
-                    <td>{{ trf.destination_hospital.name }}</td>
-                    <td><span class="badge bg-info text-dark">{{ trf.get_status_display }}</span></td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="4" class="text-center text-muted py-4">No recent stock transfers.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+  </section>
+
+  <aside class="ms-notif-card">
+    <header class="card-header">
+      <h2>Unread Notifications</h2>
+    </header>
+    <ul class="ms-notif-list">
+      {% for notif in unread_notifications %}
+      <li class="ms-notif-item is-unread">
+        <div class="ms-notif-top">
+          <span class="ms-notif-title">{{ notif.title }}</span>
+          <span class="ms-notif-time">{{ notif.created_at|timesince }} ago</span>
+        </div>
+        <p class="ms-notif-msg">{{ notif.message }}</p>
+        <div class="ms-notif-actions">
+          <form method="post" action="{% url 'mark_notification_read' notif.pk %}">
+            {% csrf_token %}
+            <button type="submit">Mark read</button>
+          </form>
+        </div>
+      </li>
+      {% empty %}
+      <li class="ms-notif-empty">No unread notifications.</li>
+      {% endfor %}
+    </ul>
+  </aside>
 </div>
 {% endblock %}
 

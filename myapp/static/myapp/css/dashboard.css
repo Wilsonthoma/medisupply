@@ -1,50 +1,304 @@
+/* ==========================================================================
+   MEDISUPPLY — Dashboard stylesheet
+   Shared by admin / hospital_admin / branch / warehouse dashboards.
+   ========================================================================== */
+
+:root {
+  --ms-navy: #0f2a43;
+  --ms-teal: #0d7d7d;
+  --ms-teal-light: #14a8a8;
+  --ms-teal-soft: #e6f4f4;
+  --ms-slate: #4a5b6b;
+  --ms-slate-light: #7a8a99;
+  --ms-surface: #ffffff;
+  --ms-surface-soft: #f4f7f9;
+  --ms-border: #dce3e8;
+  --ms-border-subtle: #eef2f5;
+  --ms-warn: #b45309;
+  --ms-warn-soft: #fdf3e7;
+  --ms-critical: #b91c1c;
+  --ms-critical-soft: #fdecec;
+  --ms-success: #15803d;
+  --ms-success-soft: #e8f6ee;
+  --ms-radius: 10px;
+  --ms-shadow: 0 1px 2px rgba(15, 42, 67, 0.04), 0 4px 12px rgba(15, 42, 67, 0.04);
+}
+
+/* ---------- Page header ---------- */
+.ms-dash-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--ms-border-subtle);
+}
+
+.ms-dash-header h1 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--ms-navy);
+  margin: 0 0 0.25rem;
+  letter-spacing: -0.01em;
+}
+
+.ms-dash-header p {
+  color: var(--ms-slate);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.ms-dash-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* ---------- KPI cards ---------- */
 .ms-kpi-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
 }
 
 .ms-kpi-card {
-  background-color: var(--ms-surface);
+  position: relative;
+  background: var(--ms-surface);
   border: 1px solid var(--ms-border);
   border-top: 3px solid var(--ms-teal);
-  border-radius: 8px;
-  padding: 1rem 1.15rem;
+  border-radius: var(--ms-radius);
+  padding: 1.1rem 1.15rem;
+  box-shadow: var(--ms-shadow);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.ms-kpi-card.is-warning {
-  border-top-color: #b45309;
+.ms-kpi-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(15, 42, 67, 0.06), 0 8px 20px rgba(15, 42, 67, 0.06);
 }
 
-.ms-kpi-card.is-critical {
-  border-top-color: #b91c1c;
+.ms-kpi-card--warn {
+  border-top-color: var(--ms-warn);
+}
+
+.ms-kpi-card--critical {
+  border-top-color: var(--ms-critical);
+}
+
+.ms-kpi-card--success {
+  border-top-color: var(--ms-success);
 }
 
 .ms-kpi-label {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   color: var(--ms-slate);
+  display: block;
 }
 
 .ms-kpi-value {
-  font-size: 1.65rem;
+  font-size: 1.85rem;
   font-weight: 700;
   color: var(--ms-navy);
-  margin: 0.25rem 0 0.15rem;
+  line-height: 1.1;
+  margin: 0.35rem 0 0.25rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .ms-kpi-sub {
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   color: var(--ms-slate-light);
+  display: block;
 }
 
+.ms-kpi-card a.ms-kpi-link {
+  display: inline-block;
+  margin-top: 0.55rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ms-teal);
+  text-decoration: none;
+}
+
+.ms-kpi-card a.ms-kpi-link:hover {
+  color: var(--ms-teal-light);
+  text-decoration: underline;
+}
+
+/* ---------- Two-column body grid ---------- */
 .ms-dash-grid {
   display: grid;
-  grid-template-columns: 1.5fr 1fr;
+  grid-template-columns: 1.6fr 1fr;
   gap: 1.25rem;
+  align-items: start;
+}
+
+@media (max-width: 1199.98px) {
+  .ms-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ms-dash-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 575.98px) {
+  .ms-kpi-grid { grid-template-columns: 1fr; gap: 0.75rem; }
+  .ms-kpi-value { font-size: 1.6rem; }
+}
+
+/* ---------- Cards ---------- */
+.ms-section-header {
+  border-bottom: 1px solid var(--ms-border-subtle);
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.ms-table-card {
+  background: var(--ms-surface);
+  border: 1px solid var(--ms-border);
+  border-radius: var(--ms-radius);
+  box-shadow: var(--ms-shadow);
+  overflow: hidden;
+}
+
+.ms-table-card .card-header {
+  background: var(--ms-surface);
+  border-bottom: 1px solid var(--ms-border-subtle);
+  padding: 0.9rem 1.15rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ms-table-card .card-header h2 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--ms-navy);
+  margin: 0;
+}
+
+.ms-table-card .card-header a {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ms-teal);
+  text-decoration: none;
+}
+
+.ms-table-card .card-header a:hover {
+  color: var(--ms-teal-light);
+  text-decoration: underline;
+}
+
+/* ---------- Tables ---------- */
+.ms-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0;
+}
+
+.ms-table thead th {
+  background: var(--ms-surface-soft);
+  color: var(--ms-slate);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.7rem 1.15rem;
+  text-align: left;
+  border-bottom: 1px solid var(--ms-border);
+  white-space: nowrap;
+}
+
+.ms-table tbody td {
+  padding: 0.8rem 1.15rem;
+  border-bottom: 1px solid var(--ms-border-subtle);
+  font-size: 0.85rem;
+  color: var(--ms-navy);
+  vertical-align: middle;
+}
+
+.ms-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.ms-table tbody tr:hover {
+  background: var(--ms-surface-soft);
+}
+
+.ms-table .ms-ref {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ms-teal);
+}
+
+.ms-table .ms-muted {
+  color: var(--ms-slate-light);
+  font-size: 0.8rem;
+}
+
+.ms-table .ms-empty {
+  text-align: center;
+  color: var(--ms-slate-light);
+  font-size: 0.85rem;
+  padding: 2.5rem 1rem;
+}
+
+.ms-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ---------- Status badges ---------- */
+.ms-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.28rem 0.6rem;
+  border-radius: 999px;
+  line-height: 1.3;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+.ms-badge--pending    { background: #fef3c7; color: #92400e; }
+.ms-badge--review     { background: #dbeafe; color: #1e40af; }
+.ms-badge--approved   { background: var(--ms-success-soft); color: var(--ms-success); }
+.ms-badge--partial    { background: #ede9fe; color: #5b21b6; }
+.ms-badge--rejected   { background: var(--ms-critical-soft); color: var(--ms-critical); }
+.ms-badge--dispatch   { background: #cffafe; color: #155e75; }
+.ms-badge--delivered  { background: #dcfce7; color: #166534; }
+.ms-badge--completed  { background: #d1fae5; color: #065f46; }
+.ms-badge--cancelled  { background: #f1f5f9; color: #475569; }
+.ms-badge--warning    { background: var(--ms-warn-soft); color: var(--ms-warn); }
+.ms-badge--danger     { background: var(--ms-critical-soft); color: var(--ms-critical); }
+
+/* ---------- Notifications ---------- */
+.ms-notif-card {
+  background: var(--ms-surface);
+  border: 1px solid var(--ms-border);
+  border-radius: var(--ms-radius);
+  box-shadow: var(--ms-shadow);
+  overflow: hidden;
+}
+
+.ms-notif-card .card-header {
+  background: var(--ms-surface);
+  border-bottom: 1px solid var(--ms-border-subtle);
+  padding: 0.9rem 1.15rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ms-notif-card .card-header h2 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--ms-navy);
+  margin: 0;
 }
 
 .ms-notif-list {
@@ -55,10 +309,10 @@
 
 .ms-notif-item {
   padding: 0.85rem 1.15rem;
-  border-bottom: 1px solid var(--ms-border);
+  border-bottom: 1px solid var(--ms-border-subtle);
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.3rem;
 }
 
 .ms-notif-item:last-child {
@@ -66,7 +320,8 @@
 }
 
 .ms-notif-item.is-unread {
-  background-color: #f8fcfc;
+  background: #f8fcfc;
+  border-left: 3px solid var(--ms-teal);
 }
 
 .ms-notif-top {
@@ -83,7 +338,7 @@
 }
 
 .ms-notif-time {
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   color: var(--ms-slate-light);
   white-space: nowrap;
 }
@@ -92,20 +347,99 @@
   font-size: 0.82rem;
   color: var(--ms-slate);
   margin: 0;
+  line-height: 1.4;
 }
 
-@media (max-width: 1199.98px) {
-  .ms-kpi-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+.ms-notif-actions {
+  margin-top: 0.35rem;
+}
 
-  .ms-dash-grid {
-    grid-template-columns: 1fr;
-  }
+.ms-notif-actions button {
+  font-size: 0.75rem;
+  padding: 0.22rem 0.6rem;
+  border: 1px solid var(--ms-border);
+  background: var(--ms-surface);
+  color: var(--ms-slate);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ms-notif-actions button:hover {
+  border-color: var(--ms-teal);
+  color: var(--ms-teal);
+  background: var(--ms-teal-soft);
+}
+
+.ms-notif-empty {
+  padding: 2.5rem 1rem;
+  text-align: center;
+  color: var(--ms-slate-light);
+  font-size: 0.85rem;
+}
+
+/* ---------- Buttons (dashboard-scoped) ---------- */
+.ms-btn-medical {
+  background: var(--ms-teal);
+  color: #fff;
+  border: 1px solid var(--ms-teal);
+  font-weight: 600;
+  font-size: 0.82rem;
+  padding: 0.42rem 0.9rem;
+  border-radius: 7px;
+  text-decoration: none;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.ms-btn-medical:hover {
+  background: var(--ms-teal-light);
+  border-color: var(--ms-teal-light);
+  color: #fff;
+}
+
+.ms-btn-outline {
+  background: var(--ms-surface);
+  color: var(--ms-navy);
+  border: 1px solid var(--ms-border);
+  font-weight: 600;
+  font-size: 0.82rem;
+  padding: 0.42rem 0.9rem;
+  border-radius: 7px;
+  text-decoration: none;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.ms-btn-outline:hover {
+  border-color: var(--ms-teal);
+  color: var(--ms-teal);
+}
+
+/* ---------- Alerts (for messages inside dashboard) ---------- */
+.ms-dash-alert {
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.ms-dash-alert--warn     { background: var(--ms-warn-soft);     color: var(--ms-warn);     border: 1px solid #f3d5b5; }
+.ms-dash-alert--danger   { background: var(--ms-critical-soft); color: var(--ms-critical); border: 1px solid #f5c2c2; }
+.ms-dash-alert--success  { background: var(--ms-success-soft);  color: var(--ms-success);  border: 1px solid #b7e2c5; }
+.ms-dash-alert--info     { background: var(--ms-teal-soft);     color: var(--ms-teal);     border: 1px solid #b8dede; }
+
+/* ---------- Responsive tweaks ---------- */
+@media (max-width: 767.98px) {
+  .ms-dash-header { flex-direction: column; align-items: stretch; }
+  .ms-dash-actions { width: 100%; }
+  .ms-dash-actions a { flex: 1; text-align: center; }
+  .ms-table thead th,
+  .ms-table tbody td { padding: 0.65rem 0.85rem; }
+  .ms-table thead th:nth-child(4),
+  .ms-table tbody td:nth-child(4) { display: none; }
 }
 
 @media (max-width: 575.98px) {
-  .ms-kpi-grid {
-    grid-template-columns: 1fr;
-  }
+  .ms-dash-header h1 { font-size: 1.15rem; }
+  .ms-kpi-value { font-size: 1.5rem; }
+  .ms-notif-item { padding: 0.75rem 0.9rem; }
 }

@@ -16,7 +16,7 @@
   --ms-danger-bg: #fdecec;
   --ms-danger-fg: #9b1c1c;
   --ms-topbar-h: 64px;
-  --ms-sidebar-w: 248px;
+  --ms-sidebar-w: 256px;
 }
 
 *,
@@ -34,6 +34,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 0.95rem;
   line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
 .ms-auth-main {
@@ -45,6 +46,11 @@ body {
   padding: 1.5rem;
 }
 
+.ms-auth-content {
+  width: 100%;
+}
+
+/* Top Header Bar */
 .ms-topbar {
   position: fixed;
   top: 0;
@@ -80,6 +86,10 @@ body {
   cursor: pointer;
 }
 
+.ms-nav-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
 .ms-burger,
 .ms-burger::before,
 .ms-burger::after {
@@ -98,14 +108,23 @@ body {
   left: 0;
 }
 
-.ms-burger::before { top: -5px; }
-.ms-burger::after { top: 5px; }
+.ms-burger::before {
+  top: -5px;
+}
+
+.ms-burger::after {
+  top: 5px;
+}
 
 .ms-brand {
   display: flex;
   align-items: center;
   gap: 0.65rem;
   text-decoration: none;
+  color: #ffffff;
+}
+
+.ms-brand:hover {
   color: #ffffff;
 }
 
@@ -121,6 +140,7 @@ body {
   font-weight: 700;
   font-size: 0.85rem;
   letter-spacing: 0.04em;
+  flex-shrink: 0;
 }
 
 .ms-brand-text {
@@ -154,6 +174,7 @@ body {
   color: #94a3b8;
   text-transform: uppercase;
   font-size: 0.68rem;
+  font-weight: 600;
   letter-spacing: 0.05em;
 }
 
@@ -191,6 +212,7 @@ body {
   border-color: #ffffff;
 }
 
+/* Shell & Sidebar */
 .ms-shell {
   display: flex;
   padding-top: var(--ms-topbar-h);
@@ -214,30 +236,34 @@ body {
 }
 
 .ms-nav {
-  padding: 1rem 0.75rem;
+  padding: 0.85rem 0.75rem;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.15rem;
 }
 
 .ms-nav-section {
-  font-size: 0.7rem;
+  font-size: 0.6875rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--ms-slate-light);
-  padding: 0.5rem 0.75rem 0.25rem;
+  padding: 0.85rem 0.75rem 0.3rem;
+}
+
+.ms-nav-section:first-child {
+  padding-top: 0.25rem;
 }
 
 .ms-nav-link {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.6rem 0.75rem;
+  padding: 0.5rem 0.75rem;
   border-radius: 6px;
   color: #334155;
   text-decoration: none;
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   font-weight: 500;
   transition: background-color 0.15s ease, color 0.15s ease;
 }
@@ -258,7 +284,8 @@ body {
   height: 6px;
   border-radius: 50%;
   background-color: currentColor;
-  opacity: 0.55;
+  opacity: 0.45;
+  flex-shrink: 0;
 }
 
 .ms-nav-link.is-active .ms-nav-indicator {
@@ -266,7 +293,7 @@ body {
 }
 
 .ms-sidebar-footer {
-  padding: 0.9rem 1rem;
+  padding: 0.85rem 1rem;
   border-top: 1px solid var(--ms-border);
   background-color: #f8fafc;
 }
@@ -279,6 +306,12 @@ body {
   gap: 0.15rem;
 }
 
+.ms-scope-note strong {
+  color: var(--ms-navy);
+  font-size: 0.76rem;
+}
+
+/* Main Content Area */
 .ms-main {
   margin-left: var(--ms-sidebar-w);
   flex: 1;
@@ -287,8 +320,17 @@ body {
 }
 
 .ms-content {
-  max-width: 1320px;
+  max-width: 1360px;
   margin: 0 auto;
+}
+
+.ms-eyebrow {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ms-teal);
+  margin-bottom: 0.2rem;
 }
 
 .ms-page-header {
@@ -313,16 +355,22 @@ body {
   margin: 0.15rem 0 0;
 }
 
-.ms-card {
+/* Cards, KPIs & Operational Panels */
+.ms-card,
+.ms-panel {
   background-color: var(--ms-surface);
   border: 1px solid var(--ms-border);
   border-radius: 8px;
   box-shadow: 0 1px 2px rgba(15, 41, 66, 0.04);
 }
 
-.ms-card-header {
+.ms-card-header,
+.ms-panel-header {
   padding: 0.9rem 1.15rem;
   border-bottom: 1px solid var(--ms-border);
+}
+
+.ms-card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -340,6 +388,68 @@ body {
   padding: 1.15rem;
 }
 
+.ms-kpi-card {
+  background-color: var(--ms-surface);
+  border: 1px solid var(--ms-border);
+  border-radius: 8px;
+  padding: 1rem 1.15rem;
+  box-shadow: 0 1px 2px rgba(15, 41, 66, 0.04);
+  height: 100%;
+}
+
+.ms-kpi-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ms-slate);
+}
+
+.ms-kpi-value {
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: var(--ms-navy);
+  line-height: 1.2;
+  margin: 0.35rem 0;
+}
+
+.ms-kpi-meta {
+  font-size: 0.78rem;
+  color: var(--ms-slate-light);
+}
+
+/* Tables & Lists */
+.ms-table th {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ms-slate);
+  background-color: #f8fafc;
+  border-bottom-color: var(--ms-border);
+  padding: 0.6rem 0.85rem;
+}
+
+.ms-table td {
+  padding: 0.65rem 0.85rem;
+  border-bottom-color: #eef2f6;
+  font-size: 0.86rem;
+}
+
+.ms-list-group {
+  padding: 0 1rem;
+}
+
+.ms-list-item {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #eef2f6;
+}
+
+.ms-list-item:last-child {
+  border-bottom: 0;
+}
+
+/* Buttons & Badges */
 .ms-btn-primary {
   background-color: var(--ms-teal);
   border-color: var(--ms-teal);
@@ -363,13 +473,29 @@ body {
   letter-spacing: 0.02em;
 }
 
-.ms-badge-ok { background-color: var(--ms-success-bg); color: var(--ms-success-fg); }
-.ms-badge-warn { background-color: var(--ms-warn-bg); color: var(--ms-warn-fg); }
-.ms-badge-alert { background-color: var(--ms-danger-bg); color: var(--ms-danger-fg); }
-.ms-badge-neutral { background-color: #e2e8f0; color: #334155; }
+.ms-badge-ok {
+  background-color: var(--ms-success-bg);
+  color: var(--ms-success-fg);
+}
 
+.ms-badge-warn {
+  background-color: var(--ms-warn-bg);
+  color: var(--ms-warn-fg);
+}
+
+.ms-badge-alert {
+  background-color: var(--ms-danger-bg);
+  color: var(--ms-danger-fg);
+}
+
+.ms-badge-neutral {
+  background-color: #e2e8f0;
+  color: #334155;
+}
+
+/* Alerts */
 .ms-alerts {
-  max-width: 1320px;
+  max-width: 1360px;
   margin: 0 auto 1rem;
 }
 
@@ -387,8 +513,14 @@ body {
 }
 
 @media (max-width: 991.98px) {
-  .ms-nav-toggle { display: inline-flex; }
-  .ms-context-pill { display: none; }
+  .ms-nav-toggle {
+    display: inline-flex;
+  }
+
+  .ms-context-pill,
+  .ms-user-meta {
+    display: none;
+  }
 
   .ms-sidebar {
     transform: translateX(-100%);

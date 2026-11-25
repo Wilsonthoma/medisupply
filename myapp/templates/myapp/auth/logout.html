@@ -3,18 +3,32 @@
 
 {% block title %}Signed Out{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'myapp/css/auth.css' %}">
+{% endblock %}
+
 {% block auth_content %}
-<div class="container">
-  <div class="row justify-content-center">
-    <div class="col-12 col-sm-10 col-md-6 col-lg-4">
-      <div class="ms-auth-card text-center">
+<div class="container py-4 py-md-5">
+  <div class="row justify-content-center align-items-center">
+    <div class="col-12 col-sm-10 col-md-7 col-lg-5 col-xl-4">
+      <div class="ms-auth-card shadow-sm text-center">
         <div class="ms-auth-header">
-          <span class="ms-auth-code">MEDISUPPLY</span>
-          <h1 class="ms-auth-title">Signed Out</h1>
-          <p class="ms-auth-subtitle">Your session has ended.</p>
+          <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+            <span class="ms-auth-code">MEDISUPPLY</span>
+          </div>
+          <h1 class="ms-auth-title h4 mb-1">Session Ended</h1>
+          <p class="ms-auth-subtitle mb-0">You have been signed out of the Clinical &amp; Supply Portal.</p>
         </div>
+
         <div class="ms-auth-body">
-          <a href="{% url 'login' %}" class="btn ms-btn-primary w-100">Sign In Again</a>
+          <p class="small text-muted mb-4">
+            For facility workstation security, close shared browser windows if you are leaving your terminal.
+          </p>
+          <a href="{% url 'login' %}" class="btn ms-btn-primary w-100 fw-semibold py-2">Sign In Again</a>
+        </div>
+
+        <div class="ms-auth-footer">
+          <div class="small">Rift Valley Central Referral Hospital &amp; Nakuru County Network</div>
         </div>
       </div>
     </div>
