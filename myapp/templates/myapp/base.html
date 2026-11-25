@@ -12,13 +12,14 @@
 </head>
 <body class="ms-body" data-authenticated="{{ request.user.is_authenticated|yesno:'true,false' }}">
   {% if request.user.is_authenticated %}
+  {% with role_code=request.user.role.role_code|default:'' %}
   <header class="ms-topbar">
     <div class="ms-topbar-left">
       <button
         type="button"
         class="ms-nav-toggle"
         id="msNavToggle"
-        aria-label="Toggle navigation sidebar"
+        aria-label="Toggle sidebar"
         aria-controls="msSidebar"
         aria-expanded="false"
       >
@@ -29,150 +30,165 @@
         <span class="ms-brand-mark" aria-hidden="true">MS</span>
         <span class="ms-brand-text">
           <strong>MEDISUPPLY</strong>
-          <small>Rift Valley &amp; Nakuru Supply Network</small>
         </span>
       </a>
     </div>
 
     <div class="ms-topbar-right">
-      <div class="ms-context-pill" title="Active Facility Scope">
-        <span class="ms-context-label">Facility</span>
-        <span class="ms-context-value">
-          {% if request.user.hospital %}{{ request.user.hospital.name }}{% else %}Central Network{% endif %}
-        </span>
-      </div>
-
-      <div class="ms-user-meta">
-        <span class="ms-username">{{ request.user.get_full_name|default:request.user.username }}</span>
-        {% if request.user.role %}
-          <span class="ms-role-tag">{{ request.user.role.name }}</span>
+      <a
+        href="{% url 'notifications' %}"
+        class="ms-icon-btn {% if request.resolver_match.url_name == 'notifications' or request.resolver_match.url_name == 'mark_notification_read' %}is-active{% endif %}"
+        title="Notifications"
+        aria-label="Notifications"
+      >
+        <svg class="ms-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+        {% if unread_notifications_count|default:0 > 0 %}
+          <span class="ms-notif-dot" aria-hidden="true"></span>
         {% endif %}
-      </div>
+      </a>
 
-      <form method="post" action="{% url 'logout' %}" class="ms-logout-form m-0">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-sm ms-btn-outline">Sign Out</button>
-      </form>
+      <div class="ms-profile-menu" id="msProfileMenu">
+        <button
+          type="button"
+          class="ms-profile-trigger"
+          id="msProfileTrigger"
+          aria-expanded="false"
+          aria-controls="msProfileCard"
+          aria-label="Account profile"
+        >
+          <span class="ms-avatar" aria-hidden="true">
+            <svg class="ms-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="8" r="4"/>
+              <path d="M4 20a8 8 0 0 1 16 0"/>
+            </svg>
+          </span>
+          <span class="ms-profile-name">{{ request.user.get_full_name|default:request.user.username }}</span>
+          <span class="ms-profile-caret" aria-hidden="true"></span>
+        </button>
+
+        <div class="ms-profile-card" id="msProfileCard" role="region" aria-label="Logged-in user profile">
+          <div class="ms-profile-card-head">
+            <strong class="ms-profile-full">{{ request.user.get_full_name|default:request.user.username }}</strong>
+            <span class="ms-profile-handle">@{{ request.user.username }}</span>
+          </div>
+
+          <dl class="ms-profile-details">
+            {% if request.user.email %}
+            <div>
+              <dt>Email</dt>
+              <dd>{{ request.user.email }}</dd>
+            </div>
+            {% endif %}
+            <div>
+              <dt>Role</dt>
+              <dd>{% if request.user.role %}{{ request.user.role.role_name }}{% else %}Standard User{% endif %}</dd>
+            </div>
+            <div>
+              <dt>Facility</dt>
+              <dd>{% if request.user.hospital %}{{ request.user.hospital.name }}{% else %}Central Network{% endif %}</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
     </div>
   </header>
 
   <div class="ms-shell">
-    <aside class="ms-sidebar" id="msSidebar" aria-label="Primary Sidebar">
-      <nav class="ms-nav" aria-label="Primary Navigation">
-        <div class="ms-nav-section">Overview</div>
+    <aside class="ms-sidebar" id="msSidebar" aria-label="Sidebar">
+      <nav class="ms-nav" aria-label="Primary navigation">
         <a
           href="{% url 'dashboard' %}"
-          class="ms-nav-link {% if request.resolver_match.url_name == 'dashboard' %}is-active{% endif %}"
+          class="ms-nav-single {% if request.resolver_match.url_name == 'dashboard' %}is-active{% endif %}"
         >
-          <span class="ms-nav-indicator"></span>
-          <span>Command Dashboard</span>
-        </a>
-        <a
-          href="{% url 'notifications' %}"
-          class="ms-nav-link {% if request.resolver_match.url_name == 'notifications' or request.resolver_match.url_name == 'mark_notification_read' %}is-active{% endif %}"
-        >
-          <span class="ms-nav-indicator"></span>
-          <span>Alerts &amp; Notifications</span>
+          <span>Dashboard</span>
         </a>
 
-        <div class="ms-nav-section">Inventory &amp; FEFO</div>
-        <a
-          href="{% url 'inventory_list' %}"
-          class="ms-nav-link {% if request.resolver_match.url_name == 'inventory_list' or request.resolver_match.url_name == 'update_reorder_level' %}is-active{% endif %}"
-        >
-          <span class="ms-nav-indicator"></span>
-          <span>Stock Ledger</span>
-        </a>
-        <a
-          href="{% url 'batch_list' %}"
-          class="ms-nav-link {% if request.resolver_match.url_name == 'batch_list' %}is-active{% endif %}"
-        >
-          <span class="ms-nav-indicator"></span>
-          <span>FEFO Batch Lots</span>
-        </a>
-        <a
-          href="{% url 'commodity_list' %}"
-          class="ms-nav-link {% if request.resolver_match.url_name == 'commodity_list' or request.resolver_match.url_name == 'create_commodity' %}is-active{% endif %}"
-        >
-          <span class="ms-nav-indicator"></span>
-          <span>Medical Catalog</span>
-        </a>
-        <a
-          href="{% url 'receive_shipment' %}"
-          class="ms-nav-link {% if request.resolver_match.url_name == 'receive_shipment' %}is-active{% endif %}"
-        >
-          <span class="ms-nav-indicator"></span>
-          <span>Receive Shipment</span>
-        </a>
+        <div class="ms-nav-group {% if request.resolver_match.url_name == 'inventory_list' or request.resolver_match.url_name == 'batch_list' or request.resolver_match.url_name == 'commodity_list' or request.resolver_match.url_name == 'update_reorder_level' or request.resolver_match.url_name == 'create_commodity' %}is-active{% endif %}">
+          <button type="button" class="ms-nav-trigger" aria-expanded="false">
+            <span>Inventory</span>
+            <span class="ms-caret" aria-hidden="true"></span>
+          </button>
+          <div class="ms-nav-dropdown">
+            <a href="{% url 'inventory_list' %}" class="ms-nav-sublink {% if request.resolver_match.url_name == 'inventory_list' or request.resolver_match.url_name == 'update_reorder_level' %}is-active{% endif %}">Stock Ledger</a>
+            <a href="{% url 'batch_list' %}" class="ms-nav-sublink {% if request.resolver_match.url_name == 'batch_list' %}is-active{% endif %}">FEFO Batches</a>
+            <a href="{% url 'commodity_list' %}" class="ms-nav-sublink {% if request.resolver_match.url_name == 'commodity_list' or request.resolver_match.url_name == 'create_commodity' %}is-active{% endif %}">Catalog</a>
+          </div>
+        </div>
 
-        <div class="ms-nav-section">Requisitions &amp; Dispatch</div>
-        <a
-          href="{% url 'requests_list' %}"
-          class="ms-nav-link {% if request.resolver_match.url_name == 'requests_list' or request.resolver_match.url_name == 'review_request' %}is-active{% endif %}"
-        >
-          <span class="ms-nav-indicator"></span>
-          <span>Requisitions &amp; Approvals</span>
-        </a>
-        <a
-          href="{% url 'create_request' %}"
-          class="ms-nav-link {% if request.resolver_match.url_name == 'create_request' %}is-active{% endif %}"
-        >
-          <span class="ms-nav-indicator"></span>
-          <span>New Requisition</span>
-        </a>
-        <a
-          href="{% url 'transfers_deliveries' %}"
-          class="ms-nav-link {% if request.resolver_match.url_name == 'transfers_deliveries' or request.resolver_match.url_name == 'confirm_delivery' %}is-active{% endif %}"
-        >
-          <span class="ms-nav-indicator"></span>
-          <span>Transfers &amp; Deliveries</span>
-        </a>
-        <a
-          href="{% url 'dispatch_transfer' %}"
-          class="ms-nav-link {% if request.resolver_match.url_name == 'dispatch_transfer' %}is-active{% endif %}"
-        >
-          <span class="ms-nav-indicator"></span>
-          <span>Dispatch Stock</span>
-        </a>
+        <div class="ms-nav-group {% if request.resolver_match.url_name == 'requests_list' or request.resolver_match.url_name == 'create_request' or request.resolver_match.url_name == 'review_request' %}is-active{% endif %}">
+          <button type="button" class="ms-nav-trigger" aria-expanded="false">
+            <span>Requisitions</span>
+            <span class="ms-caret" aria-hidden="true"></span>
+          </button>
+          <div class="ms-nav-dropdown">
+            <a href="{% url 'requests_list' %}" class="ms-nav-sublink {% if request.resolver_match.url_name == 'requests_list' or request.resolver_match.url_name == 'review_request' %}is-active{% endif %}">Requests Queue</a>
+            {% if role_code == 'ROLE_BRANCH_OFFICER' or role_code == 'ROLE_ADMIN' or request.user.is_superuser %}
+              <a href="{% url 'create_request' %}" class="ms-nav-sublink {% if request.resolver_match.url_name == 'create_request' %}is-active{% endif %}">New Request</a>
+            {% endif %}
+          </div>
+        </div>
 
-        <div class="ms-nav-section">Governance &amp; Logs</div>
-        <a
-          href="{% url 'reports_analytics' %}"
-          class="ms-nav-link {% if request.resolver_match.url_name == 'reports_analytics' %}is-active{% endif %}"
-        >
-          <span class="ms-nav-indicator"></span>
-          <span>Supply Analytics</span>
-        </a>
-        <a
-          href="{% url 'stock_movements' %}"
-          class="ms-nav-link {% if request.resolver_match.url_name == 'stock_movements' %}is-active{% endif %}"
-        >
-          <span class="ms-nav-indicator"></span>
-          <span>Stock Movements</span>
-        </a>
-        <a
-          href="{% url 'audit_logs' %}"
-          class="ms-nav-link {% if request.resolver_match.url_name == 'audit_logs' %}is-active{% endif %}"
-        >
-          <span class="ms-nav-indicator"></span>
-          <span>Audit Trail</span>
-        </a>
+        <div class="ms-nav-group {% if request.resolver_match.url_name == 'transfers_deliveries' or request.resolver_match.url_name == 'dispatch_transfer' or request.resolver_match.url_name == 'receive_shipment' or request.resolver_match.url_name == 'confirm_delivery' %}is-active{% endif %}">
+          <button type="button" class="ms-nav-trigger" aria-expanded="false">
+            <span>Distribution</span>
+            <span class="ms-caret" aria-hidden="true"></span>
+          </button>
+          <div class="ms-nav-dropdown">
+            <a href="{% url 'transfers_deliveries' %}" class="ms-nav-sublink {% if request.resolver_match.url_name == 'transfers_deliveries' or request.resolver_match.url_name == 'confirm_delivery' %}is-active{% endif %}">Transfers &amp; Deliveries</a>
+            {% if role_code == 'ROLE_WAREHOUSE' or role_code == 'ROLE_HOSPITAL_ADMIN' or role_code == 'ROLE_ADMIN' or request.user.is_superuser %}
+              <a href="{% url 'dispatch_transfer' %}" class="ms-nav-sublink {% if request.resolver_match.url_name == 'dispatch_transfer' %}is-active{% endif %}">Dispatch Stock</a>
+              <a href="{% url 'receive_shipment' %}" class="ms-nav-sublink {% if request.resolver_match.url_name == 'receive_shipment' %}is-active{% endif %}">Receive Shipment</a>
+            {% endif %}
+          </div>
+        </div>
 
-        <div class="ms-nav-section">Administration</div>
-        <a
-          href="{% url 'users_hospitals' %}"
-          class="ms-nav-link {% if request.resolver_match.url_name == 'users_hospitals' %}is-active{% endif %}"
-        >
-          <span class="ms-nav-indicator"></span>
-          <span>Facilities &amp; Users</span>
-        </a>
+        <div class="ms-nav-group {% if request.resolver_match.url_name == 'reports_analytics' or request.resolver_match.url_name == 'stock_movements' or request.resolver_match.url_name == 'audit_logs' %}is-active{% endif %}">
+          <button type="button" class="ms-nav-trigger" aria-expanded="false">
+            <span>Reports &amp; Logs</span>
+            <span class="ms-caret" aria-hidden="true"></span>
+          </button>
+          <div class="ms-nav-dropdown">
+            {% if role_code == 'ROLE_WAREHOUSE' or role_code == 'ROLE_HOSPITAL_ADMIN' or role_code == 'ROLE_ADMIN' or request.user.is_superuser %}
+              <a href="{% url 'reports_analytics' %}" class="ms-nav-sublink {% if request.resolver_match.url_name == 'reports_analytics' %}is-active{% endif %}">Analytics</a>
+            {% endif %}
+            <a href="{% url 'stock_movements' %}" class="ms-nav-sublink {% if request.resolver_match.url_name == 'stock_movements' %}is-active{% endif %}">Stock Movements</a>
+            {% if role_code == 'ROLE_HOSPITAL_ADMIN' or role_code == 'ROLE_ADMIN' or request.user.is_superuser %}
+              <a href="{% url 'audit_logs' %}" class="ms-nav-sublink {% if request.resolver_match.url_name == 'audit_logs' %}is-active{% endif %}">Audit Trail</a>
+            {% endif %}
+          </div>
+        </div>
       </nav>
 
       <div class="ms-sidebar-footer">
-        <div class="ms-scope-note">
-          <strong>Distribution Network</strong>
-          <span>RVCRH &bull; Subukia &bull; Bahati &bull; Gilgil</span>
-        </div>
+        {% if role_code == 'ROLE_ADMIN' or request.user.is_superuser %}
+        <a
+          href="{% url 'users_hospitals' %}"
+          class="ms-footer-action {% if request.resolver_match.url_name == 'users_hospitals' %}is-active{% endif %}"
+          title="Settings"
+          aria-label="Settings"
+        >
+          <svg class="ms-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          <span>Settings</span>
+        </a>
+        {% endif %}
+
+        <form method="post" action="{% url 'logout' %}" class="m-0">
+          {% csrf_token %}
+          <button type="submit" class="ms-footer-action ms-logout-btn" title="Logout" aria-label="Logout">
+            <svg class="ms-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            <span>Logout</span>
+          </button>
+        </form>
       </div>
     </aside>
 
@@ -193,6 +209,7 @@
       </div>
     </main>
   </div>
+  {% endwith %}
   {% else %}
   <main class="ms-auth-main">
     {% if messages %}

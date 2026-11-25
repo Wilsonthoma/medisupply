@@ -13,18 +13,22 @@
     <div class="col-12 col-sm-10 col-md-7 col-lg-5 col-xl-4">
       <div class="ms-auth-card shadow-sm">
         <div class="ms-auth-header">
-          <div class="d-flex align-items-center justify-content-between mb-2">
+          <div class="mb-2">
             <span class="ms-auth-code">MEDISUPPLY</span>
-            <span class="badge bg-light text-dark border fw-medium">Nakuru County Network</span>
           </div>
-          <h1 class="ms-auth-title h4 mb-1">Clinical &amp; Supply Portal</h1>
-          <p class="ms-auth-subtitle mb-0">Sign in to manage FEFO inventory, requisitions, and dispatches</p>
+          <h1 class="ms-auth-title h4 mb-0">Clinical &amp; Supply Portal</h1>
         </div>
 
         <div class="ms-auth-body">
           {% if form.non_field_errors %}
             <div class="alert alert-danger py-2 px-3 small mb-3" role="alert" aria-live="assertive">
               {{ form.non_field_errors|striptags }}
+            </div>
+          {% endif %}
+
+          {% if password_request_submitted %}
+            <div class="alert alert-success py-2 px-3 small mb-3" role="status" aria-live="polite">
+              Your password reset request has been submitted to the administrator.
             </div>
           {% endif %}
 
@@ -64,42 +68,111 @@
               <label for="{{ form.password.id_for_label }}" class="form-label small fw-semibold">
                 Password
               </label>
-              <div class="input-group has-validation">
-                <input
-                  type="password"
-                  name="{{ form.password.html_name }}"
-                  id="{{ form.password.id_for_label }}"
-                  class="form-control{% if form.password.errors %} is-invalid{% endif %}"
-                  autocomplete="current-password"
-                  required
-                  {% if form.password.errors %}aria-describedby="{{ form.password.id_for_label }}_error" aria-invalid="true"{% endif %}
-                >
-                <button
-                  type="button"
-                  class="btn btn-outline-secondary btn-sm ms-toggle-password"
-                  data-target="{{ form.password.id_for_label }}"
-                  aria-label="Show password"
-                  aria-pressed="false"
-                >
-                  Show
-                </button>
-                {% if form.password.errors %}
-                  <div id="{{ form.password.id_for_label }}_error" class="invalid-feedback d-block" aria-live="polite">
-                    {{ form.password.errors|striptags }}
-                  </div>
-                {% endif %}
-              </div>
+              <input
+                type="password"
+                name="{{ form.password.html_name }}"
+                id="{{ form.password.id_for_label }}"
+                class="form-control{% if form.password.errors %} is-invalid{% endif %}"
+                autocomplete="current-password"
+                required
+                {% if form.password.errors %}aria-describedby="{{ form.password.id_for_label }}_error" aria-invalid="true"{% endif %}
+              >
+              {% if form.password.errors %}
+                <div id="{{ form.password.id_for_label }}_error" class="invalid-feedback d-block" aria-live="polite">
+                  {{ form.password.errors|striptags }}
+                </div>
+              {% endif %}
             </div>
 
             <button type="submit" class="btn ms-btn-primary w-100 fw-semibold py-2" id="msLoginSubmit">
               Sign In
             </button>
           </form>
-        </div>
 
-        <div class="ms-auth-footer">
-          <div class="small">Authorized RVCRH, Subukia, Bahati &amp; Gilgil personnel only.</div>
-          <div class="text-muted mt-1" style="font-size: 0.75rem;">All sign-in attempts are recorded in the system audit log.</div>
+          <div class="mt-3 pt-3 border-top text-center">
+            <button
+              type="button"
+              class="btn btn-link btn-sm text-decoration-none p-0 fw-semibold"
+              id="msTogglePasswordSupport"
+              aria-expanded="{% if support_form_open %}true{% else %}false{% endif %}"
+              aria-controls="msPasswordSupportBox"
+            >
+              Request Password Change from Admin
+            </button>
+          </div>
+
+          <div
+            class="mt-3 pt-3 border-top{% if not support_form_open %} d-none{% endif %}"
+            id="msPasswordSupportBox"
+          >
+            <form method="post" action="{% url 'request_password_change' %}" id="msPasswordSupportForm" novalidate>
+              {% csrf_token %}
+
+              <div class="mb-2">
+                <label for="id_support_username" class="form-label small fw-semibold">
+                  Username
+                </label>
+                <input
+                  type="text"
+                  name="username"
+                  id="id_support_username"
+                  value="{{ support_data.username|default:'' }}"
+                  class="form-control form-control-sm"
+                  autocomplete="username"
+                  autocapitalize="none"
+                  spellcheck="false"
+                  required
+                >
+              </div>
+
+              <div class="mb-2">
+                <label for="id_support_email" class="form-label small fw-semibold">
+                  Contact Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  id="id_support_email"
+                  value="{{ support_data.email|default:'' }}"
+                  class="form-control form-control-sm"
+                  autocomplete="email"
+                  required
+                >
+              </div>
+
+              <div class="mb-2">
+                <label for="id_support_facility" class="form-label small fw-semibold">
+                  Facility
+                </label>
+                <select name="facility_id" id="id_support_facility" class="form-select form-select-sm">
+                  <option value="">Select facility</option>
+                  {% for facility in facilities %}
+                    <option value="{{ facility.pk }}" {% if support_data.facility_id == facility.pk|stringformat:"s" %}selected{% endif %}>
+                      {{ facility.name }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label for="id_support_notes" class="form-label small fw-semibold">
+                  Reason / Notes for Admin
+                </label>
+                <textarea
+                  name="notes"
+                  id="id_support_notes"
+                  rows="2"
+                  class="form-control form-control-sm"
+                  placeholder="Briefly state why you need a password reset"
+                  required
+                >{{ support_data.notes|default:'' }}</textarea>
+              </div>
+
+              <button type="submit" class="btn btn-outline-secondary btn-sm w-100 fw-semibold">
+                Submit Request to Admin
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>

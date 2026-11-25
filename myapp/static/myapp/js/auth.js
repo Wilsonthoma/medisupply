@@ -1,38 +1,40 @@
 ﻿document.addEventListener("DOMContentLoaded", () => {
-  const toggleButtons = document.querySelectorAll(".ms-toggle-password");
+    const toggleBtn = document.getElementById("msTogglePasswordSupport");
+    const supportBox = document.getElementById("msPasswordSupportBox");
+    const supportForm = document.getElementById("msPasswordSupportForm");
 
-  toggleButtons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const targetId = btn.getAttribute("data-target");
-      const input = targetId ? document.getElementById(targetId) : null;
-      if (!input) return;
-
-      const reveal = input.type === "password";
-      input.type = reveal ? "text" : "password";
-      btn.textContent = reveal ? "Hide" : "Show";
-      btn.setAttribute("aria-pressed", reveal ? "true" : "false");
-    });
-  });
-
-  const loginForm = document.getElementById("msLoginForm");
-  if (!loginForm) return;
-
-  loginForm.addEventListener("submit", (event) => {
-    const usernameInput = loginForm.querySelector("input[name='username']");
-    const passwordInput = loginForm.querySelector("input[name='password']");
-    const hasUsername = Boolean(usernameInput && usernameInput.value.trim().length > 0);
-    const hasPassword = Boolean(passwordInput && passwordInput.value.length > 0);
-
-    if (!hasUsername || !hasPassword) {
-      event.preventDefault();
-      if (usernameInput && !hasUsername) usernameInput.classList.add("is-invalid");
-      if (passwordInput && !hasPassword) passwordInput.classList.add("is-invalid");
+    if (toggleBtn && supportBox) {
+        toggleBtn.addEventListener("click", () => {
+            const isHidden = supportBox.classList.toggle("d-none");
+            toggleBtn.setAttribute("aria-expanded", String(!isHidden));
+            if (!isHidden) {
+                const usernameInput = document.getElementById("id_support_username");
+                if (usernameInput) {
+                    usernameInput.focus();
+                }
+            }
+        });
     }
-  });
 
-  loginForm.querySelectorAll("input").forEach((input) => {
-    input.addEventListener("input", () => {
-      input.classList.remove("is-invalid");
-    });
-  });
+    if (supportForm) {
+        supportForm.addEventListener("submit", (event) => {
+            const username = document.getElementById("id_support_username");
+            const email = document.getElementById("id_support_email");
+            const notes = document.getElementById("id_support_notes");
+
+            let valid = true;
+            [username, email, notes].forEach((field) => {
+                if (!field) return;
+                const empty = !field.value.trim();
+                field.classList.toggle("is-invalid", empty);
+                if (empty) {
+                    valid = false;
+                }
+            });
+
+            if (!valid) {
+                event.preventDefault();
+            }
+        });
+    }
 });

@@ -134,6 +134,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     def id(self):
         return self.user_id
 
+    def get_full_name(self):
+        return self.full_name or self.username
+
     def __str__(self):
         return f"{self.full_name} [{self.role.role_code}]"
 
@@ -613,3 +616,33 @@ class AuditLog(models.Model):
 
     class Meta:
         db_table = "audit_logs"
+
+
+class PasswordChangeRequest(models.Model):
+    class Status(models.TextChoices):
+        PENDING = "PENDING", "Pending"
+        RESOLVED = "RESOLVED", "Resolved"
+        REJECTED = "REJECTED", "Rejected"
+
+    request_id = models.BigAutoField(primary_key=True)
+    username = models.CharField(max_length=60)
+    email = models.CharField(max_length=120)
+    facility = models.ForeignKey(
+        Hospital,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        db_column="hospital_id",
+        related_name="password_change_requests",
+    )
+    notes = models.TextField()
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
+    created_at = models.DateTimeField(auto_now_add=True)
+    resolved_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = "password_change_requests"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.username} ({self.get_status_display()})"

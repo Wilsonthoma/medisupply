@@ -11,6 +11,7 @@ from .models import (
     Inventory,
     InventoryBatch,
     Notification,
+    PasswordChangeRequest,
     Role,
     StockMovement,
     StockTransfer,
@@ -38,3 +39,4 @@ admin.site.register(DeliveryItem)
 admin.site.register(StockMovement)
 admin.site.register(Notification)
 admin.site.register(AuditLog)
+admin.site.register(PasswordChangeRequest)

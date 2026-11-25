@@ -13,6 +13,11 @@ urlpatterns = [
     # Authentication
     path("", auth_views.login_view, name="home"),
     path("login/", auth_views.login_view, name="login"),
+    path(
+        "login/request-password-change/",
+        auth_views.request_password_change_view,
+        name="request_password_change",
+    ),
     path("logout/", auth_views.logout_view, name="logout"),
 
     # Dashboard
